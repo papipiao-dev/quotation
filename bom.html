@@ -84,8 +84,9 @@
         </p>
     </section>
 
-    <div class="mb-8 mt-4">
+    <div class="mb-8 mt-4 text-left">
         <h2 class="text-[24px] font-bold tracking-tight text-on-surface">装修过程避坑指南</h2>
+        <p class="text-[13px] text-on-surface-variant mt-1">资深工长梳理：装修全阶段186项避坑指南</p>
     </div>
 
     <div id="guide-container" class="space-y-8">
@@ -93,23 +94,44 @@
     </div>
 </main>
 
+<div id="unlock-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeUnlockModal()"></div>
+    <div class="relative bg-white w-[90%] max-w-sm rounded-3xl p-8 shadow-2xl z-10">
+        <h3 class="text-xl font-bold mb-6 text-center text-on-surface">解锁完整避坑指南</h3>
+        
+        <div class="space-y-4">
+            <div>
+                <input type="tel" id="phone-input" placeholder="请输入手机号码" maxlength="11" class="w-full h-12 px-4 bg-surface-container-low border border-outline-variant/30 rounded-xl focus:ring-1 focus:ring-black text-sm outline-none transition-all">
+            </div>
+            <div class="flex gap-2">
+                <input type="text" id="code-input" placeholder="验证码" maxlength="6" class="flex-1 h-12 px-4 bg-surface-container-low border border-outline-variant/30 rounded-xl focus:ring-1 focus:ring-black text-sm outline-none transition-all">
+                <button id="send-code-btn" onclick="sendVerifyCode()" class="px-4 h-12 bg-black text-white font-medium rounded-xl text-xs whitespace-nowrap active:scale-95 transition-transform">获取验证码</button>
+            </div>
+            <button onclick="confirmUnlock()" class="w-full h-12 mt-4 bg-black text-white font-bold rounded-xl shadow-lg active:scale-95 transition-all tracking-wide">
+                确认解锁
+            </button>
+        </div>
+        
+        <button onclick="closeUnlockModal()" class="absolute top-4 right-4 text-on-surface-variant hover:text-black transition-colors">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+</div>
+
 <script>
     let localTimeout = null;
     let localDotInterval = null; 
     let quoteData = null; 
+    let globalCsvData = []; 
+    let isUnlocked = localStorage.getItem('guide_unlocked') === 'true'; 
 
-    // 系数配置
     const TIER1_CITIES = ['北京', '上海', '广州', '深圳'];
     const TIER2_CITIES = ['西安', '兰州', '银川', '呼和浩特', '重庆', '绵阳', '南充', '昆明', '贵阳', '南宁', '成都', '佛山', '惠州', '中山', '珠海', '海口', '东莞', '苏州', '南京', '武汉', '长沙', '南昌', '无锡', '盐城', '扬州', '徐州', '淮安', '镇江', '常州', '天津', '石家庄', '太原', '济南', '潍坊', '郑州', '廊坊', '保定', '青岛', '沈阳', '大连', '哈尔滨', '长春', '宁波', '金华', '南通', '绍兴', '温州', '泰州', '福州', '厦门', '泉州', '杭州', '嘉兴', '合肥', '芜湖'];
 
     const TIER_PRICES = { '经济实用': 1000, '品质主流': 1600, '奢华环保': 2500 };
     const LAYOUT_COEFFICIENT = { '1室1厅': 1.0, '2室1厅': 1.05, '3室1厅': 1.1, '其他': 1.15 };
 
-    // ==========================================
-    // 页面加载逻辑
-    // ==========================================
     document.addEventListener('DOMContentLoaded', () => {
-        // 1. 获取上一页数据
         const dataStr = sessionStorage.getItem('quotationData');
         if (dataStr) {
             quoteData = JSON.parse(dataStr);
@@ -117,29 +139,23 @@
             quoteData = { city: '上海市', area: 82, condition: '老房翻新', layout: '2室1厅' };
         }
         
-        // 2. 正常跳转，计算价格
         calculateAndDisplay('经济实用');
-        
-        // 3. 触发拉取CSV数据
         loadCSVData(); 
 
-        // 4. 给顶部 3 个 Tab 绑定点击事件
         const tabs = document.querySelectorAll('.tab-btn');
         tabs[0].onclick = function() { switchTabLocal(this, '经济实用'); };
         tabs[1].onclick = function() { switchTabLocal(this, '品质主流'); };
         tabs[2].onclick = function() { switchTabLocal(this, '奢华环保'); };
     });
 
-    // ==========================================
-    // CSV 解析与动态渲染逻辑
-    // ==========================================
     function loadCSVData() {
         Papa.parse('data.csv', {
             download: true,
-            header: true, // 开启表头模式
-            skipEmptyLines: true, // 忽略空行
+            header: true, 
+            skipEmptyLines: true, 
             complete: function(results) {
-                renderGuideData(results.data);
+                globalCsvData = results.data; 
+                renderGuideData(globalCsvData);
             },
             error: function(err) {
                 console.error("加载 data.csv 失败", err);
@@ -150,12 +166,11 @@
 
     function renderGuideData(data) {
         const container = document.getElementById('guide-container');
-        container.innerHTML = ''; // 清空加载提示
+        container.innerHTML = ''; 
 
-        // 1. 按照 "大类" 进行数据分组
         const groupedData = {};
         data.forEach(row => {
-            if (!row['大类']) return; // 过滤空行
+            if (!row['大类']) return; 
             const stage = row['大类']; 
             if (!groupedData[stage]) {
                 groupedData[stage] = [];
@@ -163,27 +178,30 @@
             groupedData[stage].push(row);
         });
 
-        // 2. 遍历分组并生成 HTML
         const stages = Object.keys(groupedData);
+        let stopRendering = false; 
 
         stages.forEach((stageName) => {
+            if (stopRendering) return;
+
             const items = groupedData[stageName];
 
             let sectionHtml = `
-                <section class="apple-card p-8 sm:p-10 mb-8">
+                <section class="apple-card p-8 sm:p-10 mb-8 relative">
                     <div class="flex items-center gap-3 mb-12">
                         <h3 class="text-2xl font-bold tracking-tight">${stageName}</h3>
                     </div>
                     <div class="space-y-12">
             `;
 
-            // 渲染具体的项
-            items.forEach((item, itemIndex) => {
-                const itemNum = item['序号'] || (itemIndex + 1);
+            for (let i = 0; i < items.length; i++) {
+                if (stopRendering) break;
+
+                const item = items[i];
+                const itemNum = item['序号'] || (i + 1);
                 const itemName = item['施工细项'] || '未命名项目';
                 const itemUnit = item['单位'] || '-';
                 
-                // 从“说明”列提取文本内容（兼容尚未拆分列的情况）
                 let rawText = item['说明'] || '';
                 let warningText = item['警示'] || '';
                 let pitfallText = item['避坑'] || '';
@@ -195,7 +213,6 @@
                     if (pitfallMatch) pitfallText = pitfallMatch[1].trim();
                 }
 
-                // 组装带 Icon、文字和底色的 HTML 块
                 let warningHtml = warningText ? 
                     `<div class="bg-amber-50 text-amber-900 px-4 py-3 rounded-xl mb-3 text-[14px] leading-relaxed border border-amber-100">
                         <span class="font-bold">⚠️ 警示：</span>${warningText}
@@ -218,16 +235,30 @@
                         </div>
                     </div>
                 `;
-            });
 
-            sectionHtml += `</div></section>`;
-            container.innerHTML += sectionHtml;
+                if (!isUnlocked && stageName === '二、隐蔽工程' && (itemName === '漏电保护/空气开关' || itemNum == '17')) {
+                    stopRendering = true;
+                    sectionHtml += `
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#ffffff] to-transparent flex items-end justify-center pb-8 rounded-b-[32px]">
+                            <button onclick="openUnlockModal()" class="px-8 py-4 bg-black text-white font-bold rounded-2xl shadow-xl active:scale-95 transition-all flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[20px]">lock_open</span>
+                                解锁全部避坑指南
+                            </button>
+                        </div>
+                    </section>`;
+                    container.innerHTML += sectionHtml;
+                    return; 
+                }
+            }
+
+            if (!stopRendering) {
+                sectionHtml += `</div></section>`;
+                container.innerHTML += sectionHtml;
+            }
         });
     }
 
-    // ==========================================
-    // 核心计算与文字渲染 (百位数向下取整)
-    // ==========================================
     function getCalculatedPrice(tierType) {
         if (!quoteData) return 0;
         const area = quoteData.area;
@@ -262,9 +293,6 @@
         document.getElementById('description-text').innerText = descText;
     }
 
-    // ==========================================
-    // 切换 Tab 时的局部 8 秒动画
-    // ==========================================
     function switchTabLocal(el, tierType) {
         const buttons = document.querySelectorAll('.tab-btn');
         buttons.forEach(btn => {
@@ -307,6 +335,65 @@
             
             calculateAndDisplay(tierType);
         }, 8000); 
+    }
+
+    let smsCountdown = 0;
+    let smsInterval = null;
+
+    function openUnlockModal() {
+        document.getElementById('unlock-modal').classList.remove('hidden');
+    }
+
+    function closeUnlockModal() {
+        document.getElementById('unlock-modal').classList.add('hidden');
+    }
+
+    function sendVerifyCode() {
+        const phone = document.getElementById('phone-input').value.trim();
+        if (!/^1[3-9]\d{9}$/.test(phone)) {
+            alert('请输入正确的11位手机号码');
+            return;
+        }
+        if (smsCountdown > 0) return;
+
+        smsCountdown = 60;
+        const btn = document.getElementById('send-code-btn');
+        btn.classList.replace('bg-black', 'bg-gray-300');
+        btn.innerText = `${smsCountdown}s后重发`;
+        
+        smsInterval = setInterval(() => {
+            smsCountdown--;
+            if (smsCountdown <= 0) {
+                clearInterval(smsInterval);
+                btn.classList.replace('bg-gray-300', 'bg-black');
+                btn.innerText = '获取验证码';
+            } else {
+                btn.innerText = `${smsCountdown}s后重发`;
+            }
+        }, 1000);
+    }
+
+    async function confirmUnlock() {
+        const phone = document.getElementById('phone-input').value.trim();
+        const code = document.getElementById('code-input').value.trim();
+        
+        if (!/^1[3-9]\d{9}$/.test(phone) || !code) {
+            alert('请完善手机号和验证码');
+            return;
+        }
+
+        try {
+            alert("解锁成功！专属顾问稍后可能会与您联系。");
+            closeUnlockModal();
+            isUnlocked = true;
+            localStorage.setItem('guide_unlocked', 'true'); 
+            
+            renderGuideData(globalCsvData);
+
+        } catch (error) {
+            console.error("解锁请求失败:", error);
+            alert("网络异常，请重试");
+        }
     }
 </script>
 </body>
