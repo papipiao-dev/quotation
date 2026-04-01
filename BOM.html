@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-
-<html lang="zh-CN"><head>
+<html lang="zh-CN">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
       tailwind.config = {
         darkMode: "class",
@@ -23,23 +24,13 @@
               "headline": ["Inter", "-apple-system", "BlinkMacSystemFont", "SF Pro Display", "sans-serif"],
               "body": ["Inter", "-apple-system", "BlinkMacSystemFont", "SF Pro Text", "sans-serif"]
             },
-            borderRadius: {"DEFAULT": "12px", "lg": "24px", "xl": "32px", "2xl": "40px", "full": "9999px"},
-            keyframes: {
-              dot: {
-                '0%, 20%': { opacity: '0' },
-                '50%': { opacity: '1' },
-                '80%, 100%': { opacity: '0' },
-              }
-            },
-            animation: {
-              'dot-bounce': 'dot 1.4s infinite ease-in-out',
-            }
+            borderRadius: {"DEFAULT": "12px", "lg": "24px", "xl": "32px", "2xl": "40px", "full": "9999px"}
           },
         },
       }
     </script>
 <style>
-        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; letter-spacing: -0.011em; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; letter-spacing: -0.011em; margin: 0; padding: 0; }
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
             display: inline-block;
@@ -55,182 +46,226 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             color: #1d1d1f !important;
         }
-        
-        /* Sequential dots animation */
-        .dot { opacity: 0; animation: dot-seq 1.5s infinite; }
-        .dot-1 { animation-delay: 0s; }
-        .dot-2 { animation-delay: 0.3s; }
-        .dot-3 { animation-delay: 0.6s; }
-        
-        @keyframes dot-seq {
-            0% { opacity: 0; }
-            20% { opacity: 1; }
-            80% { opacity: 1; }
-            100% { opacity: 0; }
-        }
-
-        /* Content Blur Gating - Updated for sophisticated progressive effect */
-        .content-gate-container {
-            position: relative;
-            overflow: hidden;
-        }
-        .blur-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 400px;
-            background: linear-gradient(to bottom, 
-                rgba(255, 255, 255, 0) 0%, 
-                rgba(255, 255, 255, 0.4) 20%, 
-                rgba(255, 255, 255, 0.8) 50%,
-                rgba(255, 255, 255, 1) 100%);
-            backdrop-filter: blur(4px) saturate(180%);
-            -webkit-backdrop-filter: blur(4px) saturate(180%);
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
-            padding-bottom: 40px;
-        }
-        /* Extra layer for deeper blur at the very bottom */
-        .blur-overlay::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 150px;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            z-index: -1;
-            mask-image: linear-gradient(to bottom, transparent, black);
-            -webkit-mask-image: linear-gradient(to bottom, transparent, black);
-        }
     </style>
 </head>
 <body class="bg-surface text-on-surface selection:bg-primary/10">
-<!-- TopAppBar -->
-<header class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl flex items-center justify-center px-6 py-4 border-b border-black/[0.03]">
-<div class="absolute left-6">
-<button class="active:scale-95 transition-transform text-zinc-900">
-<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
-</button>
-</div>
-<h1 class="font-sans text-[17px] font-semibold tracking-tight text-zinc-900 mx-auto">报价详情</h1>
-</header>
-<main class="pt-24 pb-12 px-6 max-w-2xl mx-auto">
-<!-- Segmented Control -->
-<section class="bg-[#e8e8ed] p-1 rounded-full flex gap-1 mb-6 relative">
-<button class="tab-btn flex-1 py-2 text-[13px] font-medium rounded-full tab-active transition-all duration-300" onclick="switchTab(this, '96,200', '经济实用')">经济实用</button>
-<button class="tab-btn flex-1 py-2 text-[13px] font-medium rounded-full text-on-surface-variant hover:text-on-surface transition-all duration-300" onclick="switchTab(this, '158,800', '品质主流')">品质主流</button>
-<button class="tab-btn flex-1 py-2 text-[13px] font-medium rounded-full text-on-surface-variant hover:text-on-surface transition-all duration-300" onclick="switchTab(this, '268,000', '奢华环保')">奢华环保</button>
-</section>
-<!-- Main Estimate (Hero) -->
-<section class="text-left mb-10 min-h-[180px]">
-<div class="inline-flex items-center gap-2 text-on-surface-variant mb-2">
-<span class="text-[11px] font-bold tracking-[0.12em] uppercase">预估总价</span>
-</div>
-<div class="flex items-baseline gap-1" id="price-container">
-<span class="text-[32px] sm:text-[40px] font-bold tracking-tighter text-on-surface leading-none" id="currency-symbol">¥</span>
-<span class="text-[64px] sm:text-[80px] font-bold tracking-tighter text-on-surface leading-none" id="price-value">96,200</span>
-<div class="hidden items-baseline" id="loading-state">
-<span class="text-[24px] sm:text-[32px] font-medium text-on-surface-variant">正在计算</span>
-<div class="flex items-baseline ml-0.5">
-<span class="text-[24px] sm:text-[32px] font-medium text-on-surface-variant dot dot-1">.</span>
-<span class="text-[24px] sm:text-[32px] font-medium text-on-surface-variant dot dot-2">.</span>
-<span class="text-[24px] sm:text-[32px] font-medium text-on-surface-variant dot dot-3">.</span>
-</div>
-</div>
-</div>
-<p class="text-on-surface-variant text-[14px] leading-relaxed max-w-md mt-6" id="description-text">2024年上海82㎡老房翻新<span id="selected-tier">经济实用</span>型，基于《住宅室内装饰装修工程质量验收规范》测算，实际结算以现场复核工程量为准。</p>
-</section>
-<div class="mb-8 mt-4">
-<h2 class="text-[24px] font-bold tracking-tight text-on-surface">装修过程避坑指南</h2>
-</div>
-<!-- Category Cards Container -->
-<div class="space-y-8">
-<!-- Category 1: Demolition -->
-<section class="apple-card p-8 sm:p-10">
-<div class="flex items-center gap-3 mb-12">
-<h3 class="text-2xl font-bold tracking-tight">一、拆除新建</h3>
-</div>
-<div class="space-y-12">
-<div class="group">
-<div class="flex items-start justify-between mb-3 gap-4">
-<h4 class="text-[17px] font-bold text-on-surface">1. 120mm轻体墙拆除</h4>
-<span class="shrink-0 text-[11px] font-semibold bg-surface px-2.5 py-1 rounded-full text-on-surface-variant uppercase tracking-wider">㎡</span>
-</div>
-<p class="text-[15px] text-on-surface-variant leading-relaxed">单价须包含割钢筋及拆除面水泥找平。遇墙内钢筋常被按根加收，拆完不修补是常见坑点。</p>
-</div>
-<div class="group">
-<div class="flex items-start justify-between mb-3 gap-4">
-<h4 class="text-[17px] font-bold text-on-surface">2. 240mm红砖墙拆除</h4>
-<span class="shrink-0 text-[11px] font-semibold bg-surface px-2.5 py-1 rounded-full text-on-surface-variant uppercase tracking-wider">㎡</span>
-</div>
-<p class="text-[15px] text-on-surface-variant leading-relaxed">承重墙严禁拆除！必须核实物业图纸，若为剪力墙/承重墙强拆会有违法甚至结构塌陷风险。</p>
-</div>
-<div class="group">
-<div class="flex items-start justify-between mb-3 gap-4">
-<h4 class="text-[17px] font-bold text-on-surface">3. 飘窗拆除</h4>
-<span class="shrink-0 text-[11px] font-semibold bg-surface px-2.5 py-1 rounded-full text-on-surface-variant uppercase tracking-wider">m</span>
-</div>
-<p class="text-[15px] text-on-surface-variant leading-relaxed">外挑飘窗含钢筋，严禁打拆！打拆会破坏外墙防水导致内渗，需确认是否为假飘窗。</p>
-</div>
-</div>
-</section>
-<!-- Category 2: Hidden Works -->
-<section class="apple-card p-8 sm:p-10 content-gate-container">
-<div class="flex items-center gap-3 mb-12">
-<h3 class="text-2xl font-bold tracking-tight">二、隐蔽工程</h3>
-</div>
-<div class="space-y-12">
-<div class="group">
-<div class="flex items-start justify-between mb-3 gap-4">
-<h4 class="text-[17px] font-bold text-on-surface">1. 1.5mm² 照明线回路</h4>
-<span class="shrink-0 text-[11px] font-semibold bg-surface px-2.5 py-1 rounded-full text-on-surface-variant uppercase tracking-wider">m</span>
-</div>
-<p class="text-[15px] text-on-surface-variant leading-relaxed">单价须包干阻燃PVC管、底盒、线、人工。预估全屋米数防绕线。</p>
-</div>
-<div class="group">
-<div class="flex items-start justify-between mb-3 gap-4">
-<h4 class="text-[17px] font-bold text-on-surface">2. 2.5mm² 插座线</h4>
-<span class="shrink-0 text-[11px] font-semibold bg-surface px-2.5 py-1 rounded-full text-on-surface-variant uppercase tracking-wider">m</span>
-</div>
-<p class="text-[15px] text-on-surface-variant leading-relaxed">强烈建议点位包干！工人多绕几十米看不出，合同需写死超出比例。</p>
-</div>
-<!-- This third item starts the blur zone as per request -->
-<div class="group">
-<div class="flex items-start justify-between mb-3 gap-4">
-<h4 class="text-[17px] font-bold text-on-surface">3. 4.0mm² 大功率专线</h4>
-<span class="shrink-0 text-[11px] font-semibold bg-surface px-2.5 py-1 rounded-full text-on-surface-variant uppercase tracking-wider">m</span>
-</div>
-<p class="text-[15px] text-on-surface-variant leading-relaxed">大功率电器必须单独4平方专线，需独立回路、独立漏保。此处涉及厨房主线、卫生间主线...</p>
-</div>
-</div>
-<!-- Sophisticated Blur Overlay -->
-<div class="blur-overlay flex flex-col items-center justify-end pb-12">
-<div class="w-full max-w-[340px] px-4">
-<button class="w-full bg-primary text-white font-semibold py-4 rounded-full shadow-2xl active:scale-[0.98] transition-all duration-200 text-[15px] tracking-tight">查看详细BOM清单与防坑指南</button>
-</div>
-</div>
-</section>
-<!-- Additional blurred hint of next section -->
-<div class="opacity-10 pointer-events-none select-none">
-<section class="apple-card p-8 sm:p-10">
-<div class="flex items-center gap-3 mb-12">
-<h3 class="text-2xl font-bold tracking-tight">三、瓦工工程</h3>
-</div>
-</section>
-</div>
-</div>
-</main>
-<script>
-    let currentTimeout = null;
 
-    function switchTab(el, price, tier) {
-        // 1. Update Tabs styling
+<header class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl flex items-center justify-center px-6 py-4 border-b border-black/[0.03]">
+    <div class="absolute left-6">
+        <button onclick="window.history.back()" class="active:scale-95 transition-transform text-zinc-900">
+            <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+        </button>
+    </div>
+    <h1 class="font-sans text-[17px] font-semibold tracking-tight text-zinc-900 mx-auto">报价详情</h1>
+</header>
+
+<main class="pt-24 pb-12 px-6 max-w-2xl mx-auto">
+    <section class="bg-[#e8e8ed] p-1 rounded-full flex gap-1 mb-6 relative">
+        <button class="tab-btn tab-active flex-1 py-2 text-[13px] font-medium rounded-full transition-all duration-300">经济实用</button>
+        <button class="tab-btn flex-1 py-2 text-[13px] font-medium rounded-full text-on-surface-variant hover:text-on-surface transition-all duration-300">品质主流</button>
+        <button class="tab-btn flex-1 py-2 text-[13px] font-medium rounded-full text-on-surface-variant hover:text-on-surface transition-all duration-300">奢华环保</button>
+    </section>
+
+    <section class="text-left mb-10 min-h-[180px]">
+        <div class="inline-flex items-center gap-2 text-on-surface-variant mb-2">
+            <span class="text-[11px] font-bold tracking-[0.12em] uppercase">预估总价</span>
+        </div>
+        <div class="flex items-baseline gap-1" id="price-container">
+            <span class="text-[32px] sm:text-[40px] font-bold tracking-tighter text-on-surface leading-none" id="currency-symbol">¥</span>
+            <span class="text-[64px] sm:text-[80px] font-bold tracking-tighter text-on-surface leading-none" id="price-value">--</span>
+
+            <div class="hidden items-baseline" id="local-loading-state">
+                <span class="text-[40px] sm:text-[56px] font-bold tracking-tighter text-on-surface-variant leading-none" id="local-loading-text">正在计算</span>
+            </div>
+        </div>
+
+        <p class="text-on-surface-variant text-[14px] leading-relaxed max-w-md mt-6" id="description-text">
+            正在加载您的专属配置方案... <span id="selected-tier" style="display:none;"></span>
+        </p>
+    </section>
+
+    <div class="mb-8 mt-4">
+        <h2 class="text-[24px] font-bold tracking-tight text-on-surface">装修过程避坑指南</h2>
+    </div>
+
+    <div id="guide-container" class="space-y-8">
+        <p class="text-on-surface-variant text-center py-4">正在从 data.csv 加载避坑指南数据...</p>
+    </div>
+</main>
+
+<script>
+    let localTimeout = null;
+    let localDotInterval = null; 
+    let quoteData = null; 
+
+    // 系数配置
+    const TIER1_CITIES = ['北京', '上海', '广州', '深圳'];
+    const TIER2_CITIES = ['西安', '兰州', '银川', '呼和浩特', '重庆', '绵阳', '南充', '昆明', '贵阳', '南宁', '成都', '佛山', '惠州', '中山', '珠海', '海口', '东莞', '苏州', '南京', '武汉', '长沙', '南昌', '无锡', '盐城', '扬州', '徐州', '淮安', '镇江', '常州', '天津', '石家庄', '太原', '济南', '潍坊', '郑州', '廊坊', '保定', '青岛', '沈阳', '大连', '哈尔滨', '长春', '宁波', '金华', '南通', '绍兴', '温州', '泰州', '福州', '厦门', '泉州', '杭州', '嘉兴', '合肥', '芜湖'];
+
+    const TIER_PRICES = { '经济实用': 1000, '品质主流': 1600, '奢华环保': 2500 };
+    const LAYOUT_COEFFICIENT = { '1室1厅': 1.0, '2室1厅': 1.05, '3室1厅': 1.1, '其他': 1.15 };
+
+    // ==========================================
+    // 页面加载逻辑
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', () => {
+        // 1. 获取上一页数据
+        const dataStr = sessionStorage.getItem('quotationData');
+        if (dataStr) {
+            quoteData = JSON.parse(dataStr);
+        } else {
+            quoteData = { city: '上海市', area: 82, condition: '老房翻新', layout: '2室1厅' };
+        }
+        
+        // 2. 正常跳转，计算价格
+        calculateAndDisplay('经济实用');
+        
+        // 3. 触发拉取CSV数据
+        loadCSVData(); 
+
+        // 4. 给顶部 3 个 Tab 绑定点击事件
+        const tabs = document.querySelectorAll('.tab-btn');
+        tabs[0].onclick = function() { switchTabLocal(this, '经济实用'); };
+        tabs[1].onclick = function() { switchTabLocal(this, '品质主流'); };
+        tabs[2].onclick = function() { switchTabLocal(this, '奢华环保'); };
+    });
+
+    // ==========================================
+    // CSV 解析与动态渲染逻辑
+    // ==========================================
+    function loadCSVData() {
+        Papa.parse('data.csv', {
+            download: true,
+            header: true, // 开启表头模式
+            skipEmptyLines: true, // 忽略空行
+            complete: function(results) {
+                renderGuideData(results.data);
+            },
+            error: function(err) {
+                console.error("加载 data.csv 失败", err);
+                document.getElementById('guide-container').innerHTML = '<p class="text-red-500 text-center py-4">未能加载 data.csv 数据，请检查文件是否存在或编码格式是否正确。</p>';
+            }
+        });
+    }
+
+    function renderGuideData(data) {
+        const container = document.getElementById('guide-container');
+        container.innerHTML = ''; // 清空加载提示
+
+        // 1. 按照 "大类" 进行数据分组
+        const groupedData = {};
+        data.forEach(row => {
+            if (!row['大类']) return; // 过滤空行
+            const stage = row['大类']; 
+            if (!groupedData[stage]) {
+                groupedData[stage] = [];
+            }
+            groupedData[stage].push(row);
+        });
+
+        // 2. 遍历分组并生成 HTML
+        const stages = Object.keys(groupedData);
+
+        stages.forEach((stageName) => {
+            const items = groupedData[stageName];
+
+            let sectionHtml = `
+                <section class="apple-card p-8 sm:p-10 mb-8">
+                    <div class="flex items-center gap-3 mb-12">
+                        <h3 class="text-2xl font-bold tracking-tight">${stageName}</h3>
+                    </div>
+                    <div class="space-y-12">
+            `;
+
+            // 渲染具体的项
+            items.forEach((item, itemIndex) => {
+                const itemNum = item['序号'] || (itemIndex + 1);
+                const itemName = item['施工细项'] || '未命名项目';
+                const itemUnit = item['单位'] || '-';
+                
+                // 从“说明”列提取文本内容（兼容尚未拆分列的情况）
+                let rawText = item['说明'] || '';
+                let warningText = item['警示'] || '';
+                let pitfallText = item['避坑'] || '';
+
+                if (rawText) {
+                    const warningMatch = rawText.match(/\*\*\[警\]\*\*(.*?)(?=\*\*\[避坑\]\*\*|$)/);
+                    const pitfallMatch = rawText.match(/\*\*\[避坑\]\*\*(.*)/);
+                    if (warningMatch) warningText = warningMatch[1].trim();
+                    if (pitfallMatch) pitfallText = pitfallMatch[1].trim();
+                }
+
+                // 组装带 Icon、文字和底色的 HTML 块
+                let warningHtml = warningText ? 
+                    `<div class="bg-amber-50 text-amber-900 px-4 py-3 rounded-xl mb-3 text-[14px] leading-relaxed border border-amber-100">
+                        <span class="font-bold">⚠️ 警示：</span>${warningText}
+                    </div>` : '';
+                    
+                let pitfallHtml = pitfallText ? 
+                    `<div class="bg-blue-50 text-blue-900 px-4 py-3 rounded-xl text-[14px] leading-relaxed border border-blue-100">
+                        <span class="font-bold">💡 避坑：</span>${pitfallText}
+                    </div>` : '';
+
+                sectionHtml += `
+                    <div class="group">
+                        <div class="flex items-start justify-between mb-4 gap-4">
+                            <h4 class="text-[17px] font-bold text-on-surface">${itemNum}. ${itemName}</h4>
+                            <span class="shrink-0 text-[11px] font-semibold bg-surface px-2.5 py-1 rounded-full text-on-surface-variant uppercase tracking-wider">${itemUnit}</span>
+                        </div>
+                        <div class="mt-2">
+                            ${warningHtml}
+                            ${pitfallHtml}
+                        </div>
+                    </div>
+                `;
+            });
+
+            sectionHtml += `</div></section>`;
+            container.innerHTML += sectionHtml;
+        });
+    }
+
+    // ==========================================
+    // 核心计算与文字渲染 (百位数向下取整)
+    // ==========================================
+    function getCalculatedPrice(tierType) {
+        if (!quoteData) return 0;
+        const area = quoteData.area;
+        const basePrice = TIER_PRICES[tierType];
+        
+        let pureCityName = quoteData.city.replace('市', '');
+        let cityCoef = 0.7; 
+        if (TIER1_CITIES.includes(pureCityName)) {
+            cityCoef = 1.0;
+        } else if (TIER2_CITIES.includes(pureCityName)) {
+            cityCoef = 0.85;
+        }
+
+        const layoutCoef = LAYOUT_COEFFICIENT[quoteData.layout] || 1.0;
+        const totalPrice = area * (basePrice * cityCoef * layoutCoef);
+        
+        return Math.floor(totalPrice / 100) * 100; 
+    }
+
+    function formatMoney(number) {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    function calculateAndDisplay(tierType) {
+        const finalPrice = getCalculatedPrice(tierType);
+        
+        document.getElementById('price-value').innerText = formatMoney(finalPrice);
+        document.getElementById('selected-tier').innerText = tierType;
+        
+        const currentYear = new Date().getFullYear();
+        const descText = `${currentYear}年${quoteData.city}${quoteData.area}㎡${quoteData.condition}${tierType}型，基于《住宅室内装饰装修工程质量验收规范》测算，实际结算以现场复核工程量为准。`;
+        document.getElementById('description-text').innerText = descText;
+    }
+
+    // ==========================================
+    // 切换 Tab 时的局部 8 秒动画
+    // ==========================================
+    function switchTabLocal(el, tierType) {
         const buttons = document.querySelectorAll('.tab-btn');
         buttons.forEach(btn => {
             btn.classList.remove('tab-active');
@@ -239,30 +274,40 @@
         el.classList.add('tab-active');
         el.classList.remove('text-on-surface-variant');
 
-        // 2. Clear any pending calculation
-        if (currentTimeout) clearTimeout(currentTimeout);
+        if (localTimeout) clearTimeout(localTimeout);
+        if (localDotInterval) clearInterval(localDotInterval);
 
-        // 3. Elements
         const currencySymbol = document.getElementById('currency-symbol');
         const priceValue = document.getElementById('price-value');
-        const loadingState = document.getElementById('loading-state');
-        const tierLabel = document.getElementById('selected-tier');
+        const localLoadingState = document.getElementById('local-loading-state');
+        const localLoadingText = document.getElementById('local-loading-text');
 
-        // 4. Show loading state
         currencySymbol.classList.add('hidden');
         priceValue.classList.add('hidden');
-        loadingState.classList.remove('hidden');
-        loadingState.classList.add('inline-flex');
+        localLoadingState.classList.remove('hidden');
+        localLoadingState.classList.add('inline-flex');
 
-        // 5. Set delay for price update (3 seconds)
-        currentTimeout = setTimeout(() => {
-            loadingState.classList.add('hidden');
-            loadingState.classList.remove('inline-flex');
+        document.getElementById('description-text').innerHTML = '正在加载您的专属配置方案... <span id="selected-tier" style="display:none;"></span>';
+
+        let dotCount = 0;
+        localLoadingText.innerText = '正在计算';
+        localDotInterval = setInterval(() => {
+            dotCount = (dotCount + 1) % 4; 
+            let dots = '';
+            for(let i=0; i<dotCount; i++) dots += ' .';
+            localLoadingText.innerText = '正在计算' + dots;
+        }, 500);
+
+        localTimeout = setTimeout(() => {
+            clearInterval(localDotInterval);
+            localLoadingState.classList.add('hidden');
+            localLoadingState.classList.remove('inline-flex');
             currencySymbol.classList.remove('hidden');
-            priceValue.innerText = price;
             priceValue.classList.remove('hidden');
-            tierLabel.innerText = tier;
-        }, 3000);
+            
+            calculateAndDisplay(tierType);
+        }, 8000); 
     }
 </script>
-</body></html>
+</body>
+</html>
