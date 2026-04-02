@@ -157,6 +157,13 @@
 </div>
 
 <script>
+// 【新增逻辑】拦截 URL 中的分享人 ID 并存入浏览器缓存
+const urlParams = new URLSearchParams(window.location.search);
+const uid = urlParams.get('uid');
+if (uid) {
+    sessionStorage.setItem('referrer_uid', uid);
+}
+
 let currentCondition = 'maopi'; 
 let currentLayout = '2室1厅';   
 
@@ -234,7 +241,7 @@ function goToBOM() {
     };
     sessionStorage.setItem('quotationData', JSON.stringify(quotationData));
 
-    window.location.href = 'BOM.html';
+    window.location.href = 'bom.html';
 }
 
 // 城市数据和联动选择逻辑保持不变

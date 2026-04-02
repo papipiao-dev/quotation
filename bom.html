@@ -373,6 +373,7 @@
         }, 1000);
     }
 
+    // 【核心新增代码逻辑】
     async function confirmUnlock() {
         const phone = document.getElementById('phone-input').value.trim();
         const code = document.getElementById('code-input').value.trim();
@@ -382,7 +383,30 @@
             return;
         }
 
+        // 从缓存中获取分享人的 ID（容错默认为系统ID: 1）
+        const uid = sessionStorage.getItem('referrer_uid') || '1';
+
         try {
+            // 向后端的 clue 系统发送请求，写入新线索
+            const response = await fetch('http://150.158.82.114:8888/api/quotation/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    phone: phone,
+                    user_id: uid
+                })
+            });
+            
+            const resData = await response.json();
+            
+            if(resData.code !== 200) {
+                alert("提交失败: " + resData.message);
+                return;
+            }
+
+            // 数据入库成功后，走正常的解锁流程
             alert("解锁成功！专属顾问稍后可能会与您联系。");
             closeUnlockModal();
             isUnlocked = true;
