@@ -2,10 +2,10 @@
 <html class="light" lang="zh-CN">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.loli.net/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.loli.net/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -46,6 +46,10 @@
             background-repeat: no-repeat;
             background-size: 1.5em 1.5em;
         }
+        /* 强制输入框字体为16px，彻底杜绝 iOS 自动放大问题 */
+        input, select, textarea {
+            font-size: 16px !important;
+        }
     </style>
 </head>
 <body class="bg-surface text-on-surface min-h-screen">
@@ -53,40 +57,32 @@
 <h1 class="text-lg font-semibold tracking-tighter text-slate-900 dark:text-slate-100 mx-auto">装修报价计算器</h1>
 </nav>
 
-<main class="pt-16 pb-12">
-<section class="relative h-[200px] w-full overflow-hidden mb-10">
-<img alt="Modern Minimalist Interior" class="w-full h-full object-cover object-bottom" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXCfctXXUp5FKboX87NC4UkaUztk6_NP_xpmycLWVSv2ERY_4j7FerZF8aXLz2nbb6BWLW_UzdgrHBVBKQqO-r89mNyU4xV8pO-IG-dmmXLh78GlOZ2id_gcEGT80LwFvJr67oohAPPcoB4877qNvdOo4GNsH1oKBWHqDVh_zTkypakmV3OmfFeLapKZVuqWw8CoJT3PXH1D3-AKjIO24b2PdAhzxjk4Mg0F7OJwPzUVT3-UYXyws4HNu0f7_6iA_14QOIW_8A1qLm"/>
-<div class="absolute inset-0 bg-gradient-to-b from-transparent to-surface/90"></div>
-<div class="absolute bottom-6 left-6 right-6">
-<span class="text-[0.6875rem] font-medium tracking-[0.05em] uppercase text-black mb-1 block">Premium Estimation</span>
-<h2 class="text-[2rem] font-bold tracking-tight leading-tight text-on-surface">开启您的理想空间之旅</h2>
-</div>
-</section>
+<main class="pt-24 pb-12">
 
 <div class="px-6 space-y-12">
 <section class="space-y-4">
 <div class="flex items-center justify-between">
-<h3 class="text-lg font-semibold tracking-tight text-on-surface">地点与规模</h3>
+<h3 class="text-lg font-semibold tracking-tight text-on-surface">城市与面积</h3>
 <span class="text-[0.625rem] uppercase tracking-wider text-on-surface-variant font-medium">Step 01</span>
 </div>
 <div class="grid grid-cols-1 gap-4">
 <div class="space-y-1.5">
 <label class="text-[0.6875rem] font-medium text-on-surface-variant ml-1">所在城市</label>
 <div class="relative">
-<input id="city-input" readonly onclick="openCityPicker()" class="w-full h-12 px-4 bg-surface-container-low border-none rounded-xl focus:ring-1 focus:ring-black focus:bg-surface-container-lowest transition-all text-sm cursor-pointer text-black" placeholder="正在定位中..." type="text"/>
+<input id="city-input" readonly onclick="openCityPicker()" class="w-full h-12 px-4 bg-surface-container-low border-none rounded-xl focus:ring-1 focus:ring-black focus:bg-surface-container-lowest transition-all cursor-pointer text-black" placeholder="正在定位中..." type="text"/>
 <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[20px]">location_on</span>
 </div>
 </div>
 <div class="space-y-1.5">
 <label class="text-[0.6875rem] font-medium text-on-surface-variant ml-1">建筑面积 (㎡)</label>
-<input id="area-input" onblur="validateArea()" class="w-full h-12 px-4 bg-surface-container-low border-none rounded-xl focus:ring-1 focus:ring-black focus:bg-surface-container-lowest transition-all placeholder:text-outline-variant text-sm" placeholder="输入面积 (40-300)" type="number" min="40" max="300" step="0.01"/>
+<input id="area-input" onblur="validateArea()" class="w-full h-12 px-4 bg-surface-container-low border-none rounded-xl focus:ring-1 focus:ring-black focus:bg-surface-container-lowest transition-all placeholder:text-outline-variant" placeholder="输入面积 (40-300)" type="number" min="40" max="300" step="0.01"/>
 </div>
 </div>
 </section>
 
 <section class="space-y-4">
 <div class="flex items-center justify-between">
-<h3 class="text-lg font-semibold tracking-tight text-on-surface">原始状态</h3>
+<h3 class="text-lg font-semibold tracking-tight text-on-surface">房屋状态</h3>
 <span class="text-[0.625rem] uppercase tracking-wider text-on-surface-variant font-medium">Step 02</span>
 </div>
 <div class="flex gap-2.5 overflow-x-auto pb-1 scrollbar-hide">
@@ -143,11 +139,11 @@
         <div class="grid grid-cols-2 gap-4 mb-8">
             <div class="space-y-2">
                 <label class="text-xs font-medium text-on-surface-variant ml-1">省份 / 直辖市</label>
-                <select id="province-select" onchange="updateCityOptions()" class="w-full h-12 px-4 bg-surface-container-low border-none rounded-xl focus:ring-1 focus:ring-black text-sm font-medium"></select>
+                <select id="province-select" onchange="updateCityOptions()" class="w-full h-12 px-4 bg-surface-container-low border-none rounded-xl focus:ring-1 focus:ring-black font-medium"></select>
             </div>
             <div class="space-y-2">
                 <label class="text-xs font-medium text-on-surface-variant ml-1">城市</label>
-                <select id="city-select" class="w-full h-12 px-4 bg-surface-container-low border-none rounded-xl focus:ring-1 focus:ring-black text-sm font-medium"></select>
+                <select id="city-select" class="w-full h-12 px-4 bg-surface-container-low border-none rounded-xl focus:ring-1 focus:ring-black font-medium"></select>
             </div>
         </div>
         <button onclick="confirmCityPicker()" class="w-full h-14 bg-black text-white font-bold rounded-xl active:scale-[0.98] transition-all tracking-wide">
@@ -157,7 +153,7 @@
 </div>
 
 <script>
-// 【新增逻辑】拦截 URL 中的分享人 ID 并存入浏览器缓存
+// 拦截 URL 中的分享人 ID 并存入浏览器缓存
 const urlParams = new URLSearchParams(window.location.search);
 const uid = urlParams.get('uid');
 if (uid) {
@@ -167,9 +163,6 @@ if (uid) {
 let currentCondition = 'maopi'; 
 let currentLayout = '2室1厅';   
 
-// ==========================================
-// 1. 表单交互与失去焦点校验逻辑
-// ==========================================
 function validateArea() {
     const areaInput = document.getElementById('area-input');
     if (!areaInput.value) return; 
@@ -180,8 +173,6 @@ function validateArea() {
         areaInput.value = ''; 
         return;
     }
-    
-    // 将输入的面积强制保留最多两位小数
     areaInput.value = parseFloat(areaVal.toFixed(2));
 }
 
@@ -244,7 +235,6 @@ function goToBOM() {
     window.location.href = 'bom.html';
 }
 
-// 城市数据和联动选择逻辑保持不变
 const regionData = {
     "北京": ["北京市"], "天津": ["天津市"],
     "河北": ["石家庄市", "唐山市", "秦皇岛市", "邯郸市", "邢台市", "保定市", "张家口市", "承德市", "沧州市", "廊坊市", "衡水市"],

@@ -2,12 +2,12 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
+<script src="https://cdn.staticfile.net/tailwindcss/3.4.1/cdn.min.js"></script>
+<script src="https://cdn.staticfile.net/PapaParse/5.4.1/papaparse.min.js"></script>
+<link href="https://fonts.loli.net/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.loli.net/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
       tailwind.config = {
         darkMode: "class",
         theme: {
@@ -45,6 +45,10 @@
             background-color: white;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             color: #1d1d1f !important;
+        }
+        /* 【修复3】强制输入框字体为16px，彻底杜绝 iOS 自动放大问题 */
+        input, select, textarea {
+            font-size: 16px !important;
         }
     </style>
 </head>
@@ -90,7 +94,7 @@
     </div>
 
     <div id="guide-container" class="space-y-8">
-        <p class="text-on-surface-variant text-center py-4">正在从 data.csv 加载避坑指南数据...</p>
+        <p class="text-on-surface-variant text-center py-4">正在加载数据...</p>
     </div>
 </main>
 
@@ -101,10 +105,10 @@
         
         <div class="space-y-4">
             <div>
-                <input type="tel" id="phone-input" placeholder="请输入手机号码" maxlength="11" class="w-full h-12 px-4 bg-surface-container-low border border-outline-variant/30 rounded-xl focus:ring-1 focus:ring-black text-sm outline-none transition-all">
+                <input type="tel" id="phone-input" placeholder="请输入手机号码" maxlength="11" class="w-full h-12 px-4 bg-surface-container-low border border-outline-variant/30 rounded-xl focus:ring-1 focus:ring-black outline-none transition-all">
             </div>
             <div class="flex gap-2">
-                <input type="text" id="code-input" placeholder="验证码" maxlength="6" class="flex-1 h-12 px-4 bg-surface-container-low border border-outline-variant/30 rounded-xl focus:ring-1 focus:ring-black text-sm outline-none transition-all">
+                <input type="text" id="code-input" placeholder="验证码" maxlength="6" class="flex-1 h-12 px-4 bg-surface-container-low border border-outline-variant/30 rounded-xl focus:ring-1 focus:ring-black outline-none transition-all">
                 <button id="send-code-btn" onclick="sendVerifyCode()" class="px-4 h-12 bg-black text-white font-medium rounded-xl text-xs whitespace-nowrap active:scale-95 transition-transform">获取验证码</button>
             </div>
             <button onclick="confirmUnlock()" class="w-full h-12 mt-4 bg-black text-white font-bold rounded-xl shadow-lg active:scale-95 transition-all tracking-wide">
@@ -116,6 +120,10 @@
             <span class="material-symbols-outlined">close</span>
         </button>
     </div>
+</div>
+
+<div id="toast-message" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black/80 text-white px-6 py-3 rounded-xl text-[16px] font-medium opacity-0 invisible transition-all duration-300 z-[9999] pointer-events-none shadow-2xl">
+    成功解锁
 </div>
 
 <script>
@@ -159,7 +167,7 @@
             },
             error: function(err) {
                 console.error("加载 data.csv 失败", err);
-                document.getElementById('guide-container').innerHTML = '<p class="text-red-500 text-center py-4">未能加载 data.csv 数据，请检查文件是否存在或编码格式是否正确。</p>';
+                document.getElementById('guide-container').innerHTML = '<p class="text-red-500 text-center py-4">未能加载 data.csv 数据，请检查网络或文件路径。</p>';
             }
         });
     }
@@ -348,6 +356,22 @@
         document.getElementById('unlock-modal').classList.add('hidden');
     }
 
+    // 【新增方法】控制 Toast 弹窗显示和隐藏
+    function showToast(msg) {
+        const toast = document.getElementById('toast-message');
+        if (toast) {
+            toast.innerText = msg;
+            toast.classList.remove('invisible', 'opacity-0');
+            toast.classList.add('opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0');
+                setTimeout(() => toast.classList.add('invisible'), 300);
+            }, 2000);
+        }
+    }
+
+    // 【修复1】修改发送验证码逻辑，增加3秒后自动填充4位随机数
     function sendVerifyCode() {
         const phone = document.getElementById('phone-input').value.trim();
         if (!/^1[3-9]\d{9}$/.test(phone)) {
@@ -361,6 +385,14 @@
         btn.classList.replace('bg-black', 'bg-gray-300');
         btn.innerText = `${smsCountdown}s后重发`;
         
+        // 3秒后（即57秒时）自动生成验证码并填充
+        setTimeout(() => {
+            const codeInput = document.getElementById('code-input');
+            if (codeInput && !codeInput.value) {
+                codeInput.value = Math.floor(1000 + Math.random() * 9000); // 1000 到 9999 的随机数
+            }
+        }, 3000);
+        
         smsInterval = setInterval(() => {
             smsCountdown--;
             if (smsCountdown <= 0) {
@@ -373,7 +405,7 @@
         }, 1000);
     }
 
-    // 【核心新增代码逻辑】
+    // 【修复2】解锁逻辑中把 alert 换成了 Toast 提示，并延时关闭弹窗
     async function confirmUnlock() {
         const phone = document.getElementById('phone-input').value.trim();
         const code = document.getElementById('code-input').value.trim();
@@ -383,11 +415,9 @@
             return;
         }
 
-        // 从缓存中获取分享人的 ID（容错默认为系统ID: 1）
         const uid = sessionStorage.getItem('referrer_uid') || '1';
 
         try {
-            // 向后端的 clue 系统发送请求，写入新线索
             const response = await fetch('http://150.158.82.114:8888/api/quotation/submit', {
                 method: 'POST',
                 headers: {
@@ -406,13 +436,17 @@
                 return;
             }
 
-            // 数据入库成功后，走正常的解锁流程
-            alert("解锁成功！专属顾问稍后可能会与您联系。");
-            closeUnlockModal();
-            isUnlocked = true;
-            localStorage.setItem('guide_unlocked', 'true'); 
+            // 使用 Toast 优雅提示
+            showToast("成功解锁");
             
-            renderGuideData(globalCsvData);
+            // 延时 800ms 关闭模态框并刷新数据，让用户有时间看清楚 Toast
+            setTimeout(() => {
+                closeUnlockModal();
+                isUnlocked = true;
+                localStorage.setItem('guide_unlocked', 'true'); 
+                
+                renderGuideData(globalCsvData);
+            }, 800);
 
         } catch (error) {
             console.error("解锁请求失败:", error);
