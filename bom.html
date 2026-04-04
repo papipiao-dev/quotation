@@ -3,7 +3,14 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
-<title>报价与防坑指南</title>
+
+<title>避坑报价与指南</title>
+<meta name="description" content="20年资深工长+设计师联合吐血整理。看懂这份清单，拒绝恶意增项，至少帮你省下3万冤枉钱！"/>
+
+<meta itemprop="name" content="装修别急着开工！这186个“深坑”，90%的业主都踩过"/>
+<meta itemprop="description" content="20年资深工长+设计师联合吐血整理。看懂这份清单，拒绝恶意增项，至少帮你省下3万冤枉钱！"/>
+<meta property="og:title" content="装修别急着开工！这186个“深坑”，90%的业主都踩过" />
+<meta property="og:description" content="20年资深工长+设计师联合吐血整理。看懂这份清单，拒绝恶意增项，至少帮你省下3万冤枉钱！" />
 
 <link rel="stylesheet" href="./bom-style.css">
 <script src="https://cdn.staticfile.net/PapaParse/5.4.1/papaparse.min.js"></script>
@@ -64,7 +71,7 @@
             </div>
             
             <button onclick="confirmUnlock()" class="w-full h-12 mt-2 bg-black text-white font-bold rounded-xl shadow-lg active:scale-95 transition-all tracking-wide">
-                确认解锁
+                立即解锁
             </button>
         </div>
         
@@ -146,7 +153,6 @@
 
             const items = groupedData[stageName];
 
-            // 重点调整：改用精确内联样式，压缩上下间距
             let sectionHtml = `
                 <section class="apple-card relative" style="padding: 20px 20px; margin-bottom: 24px;">
                     <div style="margin-bottom: 12px;">
@@ -174,7 +180,6 @@
                     if (pitfallMatch) pitfallText = pitfallMatch[1].trim();
                 }
 
-                // 警示框去掉了外边距，直接用 flex gap 控制距离
                 let warningHtml = warningText ? 
                     `<div style="background-color: #fffbeb; color: #78350f; padding: 10px 14px; border-radius: 10px; font-size: 13px; line-height: 1.5; border: 1px solid #fef3c7;">
                         <span style="font-weight: 700;">⚠️ 警示：</span>${warningText}
