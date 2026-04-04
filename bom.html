@@ -4,29 +4,15 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
 
-<link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="./bom-style.css">
 <script src="https://cdn.staticfile.net/PapaParse/5.4.1/papaparse.min.js"></script>
 
 <style>
-        /* 使用系统自带默认字体，绝对不会引发网络请求卡顿 */
-        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; letter-spacing: -0.011em; margin: 0; padding: 0; }
-        .apple-card {
-            background: #ffffff;
-            border-radius: 32px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
-        }
-        .tab-active {
-            background-color: white;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            color: #1d1d1f !important;
-        }
-        /* 强制输入框字体为16px，彻底杜绝 iOS 自动放大问题 */
-        input, select, textarea {
-            font-size: 16px !important;
-        }
-    </style>
+    /* 防止 iOS 自动放大输入框 */
+    input, select, textarea { font-size: 16px !important; }
+</style>
 </head>
-<body class="bg-surface text-on-surface selection:bg-primary/10">
+<body class="bg-surface text-on-surface">
 
 <header class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl flex items-center justify-center px-6 py-4 border-b border-black/[0.03]">
     <div class="absolute left-6">
@@ -357,7 +343,6 @@
         btn.classList.replace('bg-black', 'bg-gray-300');
         btn.innerText = `${smsCountdown}s后重发`;
         
-        // 3秒后自动生成验证码并填充
         setTimeout(() => {
             const codeInput = document.getElementById('code-input');
             if (codeInput && !codeInput.value) {
@@ -389,7 +374,6 @@
         const uid = sessionStorage.getItem('referrer_uid') || '1';
 
         try {
-            // 这里我也顺手帮你把之前需要替换的 API 路径改成了绝对路径，防止跨域拦截
             const response = await fetch('/api/quotation/submit', {
                 method: 'POST',
                 headers: {
