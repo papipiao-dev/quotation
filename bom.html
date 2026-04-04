@@ -10,7 +10,7 @@
 
 <style>
     /* 防止 iOS 自动放大输入框 */
-    input, select, textarea { font-size: 16px !important; }
+    input, select, textarea { font-size: 16px !important; box-sizing: border-box; }
 </style>
 </head>
 <body class="bg-surface text-on-surface">
@@ -42,10 +42,10 @@
 
     <div class="mb-5 mt-4 text-left">
         <h2 class="text-[24px] font-bold tracking-tight text-on-surface">装修过程避坑指南</h2>
-        <p class="text-[13px] text-on-surface-variant">资深工长梳理：装修全阶段<span class="text-[16px] font-black text-black mx-0.5">186</span>项避坑指南</p>
+        <p class="text-[13px] text-on-surface-variant mt-1">资深工长梳理：装修全阶段<strong style="font-size: 18px; color: #000; font-weight: 900; margin: 0 3px;">186</strong>项避坑指南</p>
     </div>
 
-    <div id="guide-container" class="space-y-8">
+    <div id="guide-container">
         <p class="text-on-surface-variant text-center py-4">正在加载数据...</p>
     </div>
 </main>
@@ -55,15 +55,15 @@
     <div class="relative bg-white w-[90%] max-w-sm rounded-3xl p-8 shadow-2xl z-10">
         <h3 class="text-xl font-bold mb-6 text-center text-on-surface">解锁完整避坑指南</h3>
         
-        <div class="space-y-4">
-            <div>
-                <input type="tel" id="phone-input" placeholder="请输入手机号码" maxlength="11" class="w-full h-12 px-4 bg-surface-container-low border border-outline-variant/30 rounded-xl focus:ring-1 focus:ring-black outline-none transition-all">
+        <div style="display: flex; flex-direction: column; gap: 16px; width: 100%;">
+            <input type="tel" id="phone-input" placeholder="请输入手机号码" maxlength="11" class="w-full h-12 px-4 bg-surface-container-low border border-outline-variant/30 rounded-xl focus:ring-1 focus:ring-black outline-none transition-all">
+            
+            <div style="display: flex; gap: 12px; width: 100%;">
+                <input type="text" id="code-input" placeholder="验证码" maxlength="6" style="flex: 1; min-width: 0;" class="h-12 px-4 bg-surface-container-low border border-outline-variant/30 rounded-xl focus:ring-1 focus:ring-black outline-none transition-all">
+                <button id="send-code-btn" onclick="sendVerifyCode()" style="width: 105px; flex-shrink: 0;" class="h-12 bg-black text-white font-medium rounded-xl text-xs active:scale-95 transition-transform">获取验证码</button>
             </div>
-            <div class="flex gap-2">
-                <input type="text" id="code-input" placeholder="验证码" maxlength="6" class="flex-1 h-12 px-4 bg-surface-container-low border border-outline-variant/30 rounded-xl focus:ring-1 focus:ring-black outline-none transition-all">
-                <button id="send-code-btn" onclick="sendVerifyCode()" class="px-4 h-12 bg-black text-white font-medium rounded-xl text-xs whitespace-nowrap active:scale-95 transition-transform">获取验证码</button>
-            </div>
-            <button onclick="confirmUnlock()" class="w-full h-12 mt-4 bg-black text-white font-bold rounded-xl shadow-lg active:scale-95 transition-all tracking-wide">
+            
+            <button onclick="confirmUnlock()" class="w-full h-12 mt-2 bg-black text-white font-bold rounded-xl shadow-lg active:scale-95 transition-all tracking-wide">
                 确认解锁
             </button>
         </div>
@@ -74,7 +74,7 @@
     </div>
 </div>
 
-<div id="toast-message" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black/80 text-white px-6 py-3 rounded-xl text-[16px] font-medium opacity-0 invisible transition-all duration-300 z-[9999] pointer-events-none shadow-2xl">
+<div id="toast-message" style="display: none; opacity: 0; transition: opacity 0.3s; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0,0,0,0.85); color: white; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 500; z-index: 9999; pointer-events: none; box-shadow: 0 10px 25px rgba(0,0,0,0.2); white-space: nowrap; text-align: center;">
     成功解锁
 </div>
 
@@ -146,12 +146,13 @@
 
             const items = groupedData[stageName];
 
+            // 重点调整：改用精确内联样式，压缩上下间距
             let sectionHtml = `
-                <section class="apple-card p-8 sm:p-10 mb-8 relative">
-                    <div class="flex items-center gap-3 mb-2">
-                        <h3 class="text-2xl font-bold tracking-tight">${stageName}</h3>
+                <section class="apple-card relative" style="padding: 20px 20px; margin-bottom: 24px;">
+                    <div style="margin-bottom: 12px;">
+                        <h3 style="font-size: 20px; font-weight: 700; margin: 0; color: #1d1d1f; letter-spacing: -0.025em;">${stageName}</h3>
                     </div>
-                    <div class="space-y-5">
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
             `;
 
             for (let i = 0; i < items.length; i++) {
@@ -173,38 +174,37 @@
                     if (pitfallMatch) pitfallText = pitfallMatch[1].trim();
                 }
 
-                // 微调了警示框下方的距离 mb-2
+                // 警示框去掉了外边距，直接用 flex gap 控制距离
                 let warningHtml = warningText ? 
-                    `<div class="bg-amber-50 text-amber-900 px-4 py-3 rounded-xl mb-2 text-[14px] leading-relaxed border border-amber-100">
-                        <span class="font-bold">⚠️ 警示：</span>${warningText}
+                    `<div style="background-color: #fffbeb; color: #78350f; padding: 10px 14px; border-radius: 10px; font-size: 13px; line-height: 1.5; border: 1px solid #fef3c7;">
+                        <span style="font-weight: 700;">⚠️ 警示：</span>${warningText}
                     </div>` : '';
                     
                 let pitfallHtml = pitfallText ? 
-                    `<div class="bg-blue-50 text-blue-900 px-4 py-3 rounded-xl text-[14px] leading-relaxed border border-blue-100">
-                        <span class="font-bold">💡 避坑：</span>${pitfallText}
+                    `<div style="background-color: #eff6ff; color: #1e3a8a; padding: 10px 14px; border-radius: 10px; font-size: 13px; line-height: 1.5; border: 1px solid #dbeafe;">
+                        <span style="font-weight: 700;">💡 避坑：</span>${pitfallText}
                     </div>` : '';
 
                 sectionHtml += `
-                    <div class="group">
-                        <div class="flex items-center justify-between mb-1 gap-4">
-                            <h4 class="text-[17px] font-bold text-on-surface">${itemNum}. ${itemName}</h4>
-                            <span class="shrink-0 text-[11px] font-semibold bg-surface px-2.5 py-1 rounded-full text-on-surface-variant uppercase tracking-wider">${itemUnit}</span>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 12px;">
+                            <h4 style="font-size: 16px; font-weight: 700; margin: 0; color: #1d1d1f;">${itemNum}. ${itemName}</h4>
+                            <span style="flex-shrink: 0; font-size: 11px; font-weight: 600; background: #f5f5f7; padding: 2px 10px; border-radius: 9999px; color: #86868b; text-transform: uppercase;">${itemUnit}</span>
                         </div>
-                        <div class="mt-1">
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
                             ${warningHtml}
                             ${pitfallHtml}
                         </div>
                     </div>
                 `;
 
-                // 重点：将触发卡点提前至“一、拆除新建”分类下的第14项（轻钢龙骨石膏板隔墙）
                 if (!isUnlocked && stageName === '一、拆除新建' && (itemNum == '14' || itemName.includes('轻钢龙骨'))) {
                     stopRendering = true;
                     sectionHtml += `
                         </div>
-                        <div class="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#ffffff] to-transparent flex items-end justify-center pb-8 rounded-b-[32px]">
-                            <button onclick="openUnlockModal()" class="px-8 py-4 bg-black text-white font-bold rounded-2xl shadow-xl active:scale-95 transition-all flex items-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
+                        <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 120px; background: linear-gradient(to top, #ffffff, transparent); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 24px; border-bottom-left-radius: 32px; border-bottom-right-radius: 32px;">
+                            <button onclick="openUnlockModal()" style="padding: 14px 28px; background: #000; color: #fff; font-weight: 700; border-radius: 16px; display: flex; align-items: center; gap: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
+                                <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
                                 解锁全部避坑指南
                             </button>
                         </div>
@@ -314,12 +314,12 @@
         const toast = document.getElementById('toast-message');
         if (toast) {
             toast.innerText = msg;
-            toast.classList.remove('invisible', 'opacity-0');
-            toast.classList.add('opacity-100');
+            toast.style.display = 'block';
+            void toast.offsetWidth; 
+            toast.style.opacity = '1';
             setTimeout(() => {
-                toast.classList.remove('opacity-100');
-                toast.classList.add('opacity-0');
-                setTimeout(() => toast.classList.add('invisible'), 300);
+                toast.style.opacity = '0';
+                setTimeout(() => { toast.style.display = 'none'; }, 300);
             }, 2000);
         }
     }
