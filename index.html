@@ -4,8 +4,6 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.loli.net/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-<link href="https://fonts.loli.net/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -27,16 +25,15 @@
                         "outline-variant": "#acb3b8",
                     },
                     fontFamily: {
-                        "headline": ["Inter", "sans-serif"],
-                        "body": ["Inter", "sans-serif"],
+                        "headline": ["-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
+                        "body": ["-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
                     }
                 },
             },
         }
     </script>
 <style>
-        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         select {
@@ -70,7 +67,7 @@
 <label class="text-[0.6875rem] font-medium text-on-surface-variant ml-1">所在城市</label>
 <div class="relative">
 <input id="city-input" readonly onclick="openCityPicker()" class="w-full h-12 px-4 bg-surface-container-low border-none rounded-xl focus:ring-1 focus:ring-black focus:bg-surface-container-lowest transition-all cursor-pointer text-black" placeholder="正在定位中..." type="text"/>
-<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[20px]">location_on</span>
+<svg class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
 </div>
 </div>
 <div class="space-y-1.5">
@@ -120,7 +117,7 @@
 </div>
 <button onclick="goToBOM()" class="w-full h-14 bg-black text-white font-bold shadow-2xl shadow-black/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 tracking-wide rounded-lg">
 <span>开始计算报价</span>
-<span class="material-symbols-outlined text-xl" data-icon="calculate">calculate</span>
+<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-6 14h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2zM7 17h2v-2H7v2zm0-4h2v-2H7v2zm0-4h2V7H7v2z"/></svg>
 </button>
 </div>
 </section>
@@ -133,7 +130,7 @@
         <div class="flex justify-between items-center mb-6">
             <h3 class="text-lg font-bold text-on-surface">手动选择城市</h3>
             <button onclick="closeCityPicker()" class="p-2 -mr-2 rounded-full hover:bg-surface-container-high transition-colors">
-                <span class="material-symbols-outlined text-on-surface-variant">close</span>
+                <svg class="w-6 h-6 text-on-surface-variant" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
             </button>
         </div>
         <div class="grid grid-cols-2 gap-4 mb-8">
