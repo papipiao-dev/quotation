@@ -121,6 +121,10 @@
     </div>
 </div>
 
+<div id="toast-message" style="display: none; opacity: 0; transition: opacity 0.3s;" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black/80 text-white px-6 py-3 rounded-xl text-[15px] font-medium z-[9999] pointer-events-none shadow-2xl whitespace-nowrap">
+    提示信息
+</div>
+
 <script>
 const urlParams = new URLSearchParams(window.location.search);
 const uid = urlParams.get('uid');
@@ -131,13 +135,29 @@ if (uid) {
 let currentCondition = 'maopi'; 
 let currentLayout = '2室1厅';   
 
+// 封装的 Toast 提示函数
+function showToast(msg) {
+    const toast = document.getElementById('toast-message');
+    if (toast) {
+        toast.innerText = msg;
+        toast.style.display = 'block';
+        void toast.offsetWidth; 
+        toast.style.opacity = '1';
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => { toast.style.display = 'none'; }, 300);
+        }, 2000);
+    }
+}
+
 function validateArea() {
     const areaInput = document.getElementById('area-input');
     if (!areaInput.value) return; 
     
     let areaVal = parseFloat(areaInput.value);
     if (areaVal < 40 || areaVal > 300) {
-        alert("提示：建筑面积必须在 40 到 300 ㎡ 之间");
+        // 替换为 Toast
+        showToast("面积必须在 40 到 300 ㎡ 之间");
         areaInput.value = ''; 
         return;
     }
@@ -173,13 +193,15 @@ function goToBOM() {
     const area = document.getElementById('area-input').value;
 
     if (!city || city === "正在定位中..." || city === "选择城市") {
-        alert("请选择所在城市");
+        // 替换为 Toast
+        showToast("请先选择所在城市");
         return;
     }
     
     const areaVal = parseFloat(area);
     if (!areaVal || areaVal < 40 || areaVal > 300) {
-        alert("请输入40到300之间的建筑面积(㎡)");
+        // 替换为 Toast
+        showToast("请输入40到300之间的建筑面积");
         return;
     }
 
