@@ -4,52 +4,25 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
 
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "surface-container-highest": "#dde3e9",
-                        "surface-variant": "#dde3e9",
-                        "surface-container": "#ebeef2",
-                        "surface-container-low": "#f2f4f6",
-                        "on-surface-variant": "#596065",
-                        "outline": "#757c81",
-                        "surface": "#f9f9fb",
-                        "on-background": "#2d3338",
-                        "on-surface": "#2d3338",
-                        "surface-container-lowest": "#ffffff",
-                        "surface-container-high": "#e4e9ee",
-                        "background": "#f9f9fb",
-                        "outline-variant": "#acb3b8",
-                    },
-                    fontFamily: {
-                        "headline": ["-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
-                        "body": ["-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
-                    }
-                },
-            },
-        }
-    </script>
+<link rel="stylesheet" href="./style.css">
+
 <style>
-        /* 使用各大手机系统自带的默认无衬线字体，绝对不卡顿 */
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        select {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23596065' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 1rem center;
-            background-repeat: no-repeat;
-            background-size: 1.5em 1.5em;
-        }
-        /* 强制输入框字体为16px，彻底杜绝 iOS 自动放大问题 */
-        input, select, textarea {
-            font-size: 16px !important;
-        }
-    </style>
+    /* 使用各大手机系统自带的默认无衬线字体，绝对不卡顿 */
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23596065' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 1rem center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+    }
+    /* 强制输入框字体为16px，彻底杜绝 iOS 自动放大问题 */
+    input, select, textarea {
+        font-size: 16px !important;
+    }
+</style>
 </head>
 <body class="bg-surface text-on-surface min-h-screen">
 <nav class="fixed top-0 w-full z-50 flex items-center justify-between px-6 h-16 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-sm">
@@ -68,7 +41,7 @@
 <div class="space-y-1.5">
 <label class="text-[0.6875rem] font-medium text-on-surface-variant ml-1">所在城市</label>
 <div class="relative">
-<input id="city-input" readonly onclick="openCityPicker()" class="w-full h-12 px-4 bg-surface-container-low border-none rounded-xl focus:ring-1 focus:ring-black focus:bg-surface-container-lowest transition-all cursor-pointer text-black" placeholder="正在定位中..." type="text"/>
+<input id="city-input" readonly onclick="openCityPicker()" class="w-full h-12 px-4 bg-surface-container-low border-none rounded-xl focus:ring-1 focus:ring-black focus:bg-surface-container-lowest transition-all cursor-pointer text-black" placeholder="请点击选择所在城市" type="text"/>
 <svg class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
 </div>
 </div>
