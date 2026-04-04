@@ -45,7 +45,7 @@
 <main class="pt-6 pb-12">
 <div class="px-6 space-y-6">
     
-<section class="space-y-4">
+<section class="space-y-2">
 <div class="flex items-center justify-between">
 <h3 class="text-xl font-bold tracking-tight text-on-surface">城市与面积</h3>
 </div>
@@ -53,8 +53,8 @@
 <div class="space-y-2">
 <label class="text-[14px] font-medium text-on-surface-variant ml-1">所在城市</label>
 <div class="relative">
-<input id="city-input" readonly onclick="openCityPicker()" class="w-full h-14 px-4 bg-surface-container-low border-none rounded-xl focus:ring-1 focus:ring-black focus:bg-surface-container-lowest transition-all cursor-pointer text-black" placeholder="请点击选择所在城市" type="text"/>
-<svg class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+<svg class="absolute top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none w-5 h-5" style="left: 1rem;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+<input id="city-input" readonly onclick="openCityPicker()" class="w-full h-14 bg-surface-container-low border-none rounded-xl focus:ring-1 focus:ring-black focus:bg-surface-container-lowest transition-all cursor-pointer text-black" style="padding-left: 2.75rem; padding-right: 1rem;" placeholder="选择城市" type="text"/>
 </div>
 </div>
 <div class="space-y-2 mt-4">
@@ -64,7 +64,7 @@
 </div>
 </section>
 
-<section class="space-y-4 mt-2">
+<section class="space-y-2 mt-2">
 <div class="flex items-center justify-between">
 <h3 class="text-xl font-bold tracking-tight text-on-surface">房屋状态</h3>
 </div>
@@ -72,16 +72,16 @@
 <button id="btn-maopi" onclick="switchCondition('maopi')" class="flex-none px-6 h-12 flex items-center justify-center rounded-full bg-black text-white text-sm font-medium transition-transform active:scale-95 shadow-sm">毛坯房</button>
 <button id="btn-laofang" onclick="switchCondition('laofang')" class="flex-none px-6 h-12 flex items-center justify-center rounded-full bg-surface-container-high text-on-surface-variant text-sm font-medium hover:bg-surface-container-highest transition-colors">老房翻新</button>
 </div>
-<div class="px-5 pb-5 pt-2.5 bg-surface-container-lowest rounded-xl shadow-[0_20px_40px_-10px_rgba(45,51,56,0.04)] border border-outline-variant/10 mt-3">
-<p id="condition-hint" class="text-[14px] text-on-surface-variant leading-relaxed">
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_20px_40px_-10px_rgba(45,51,56,0.04)] border border-outline-variant/10 mt-3" style="padding: 16px 20px;">
+<p id="condition-hint" class="text-[14px] text-on-surface-variant leading-relaxed text-justify">
 从0到1精工筑家。涵盖空间动线重塑、国标级水电落位、高精度墙地找平及严苛防水体系。做实隐蔽工程，让您的每一分预算都化为高品质的居住底座。
 </p>
 </div>
 </section>
 
-<section class="pt-10 pb-12">
-<div class="space-y-7">
-<div class="space-y-0.5 pl-1">
+<section style="margin-top: 36px; padding-bottom: 3rem;">
+<div>
+<div class="pl-1" style="margin-bottom: 12px;">
 <div class="text-[13px] leading-[1.2] text-slate-500 text-left">测算结果将包含主材、辅材、人工明细。</div>
 <div class="text-[13px] leading-[1.2] text-slate-500 text-left">
     今日已有 <span id="owner-count" class="font-bold text-black italic text-[15px] inline-block">128</span> 位业主获取防坑报价单。
@@ -172,7 +172,7 @@ function goToBOM() {
     const city = document.getElementById('city-input').value;
     const area = document.getElementById('area-input').value;
 
-    if (!city || city === "正在定位中..." || city === "请点击选择所在城市") {
+    if (!city || city === "正在定位中..." || city === "选择城市") {
         alert("请选择所在城市");
         return;
     }
@@ -260,7 +260,7 @@ function startScrollEffect() {
 async function autoLocateCityByIP() {
     const input = document.getElementById('city-input');
     input.value = ""; 
-    input.placeholder = "请点击选择所在城市";
+    input.placeholder = "选择城市";
 }
 
 function initCityPickerData() {
