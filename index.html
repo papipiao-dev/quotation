@@ -3,14 +3,12 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
-
 <title>2026内部《装修防坑报价表》，千万别急着交定金！</title>
 <meta name="description" content="装修水太深？90%的人都在增项上吃过亏！拒绝低价陷阱和恶意增项，用这款防坑神器算一算你所在小区的真实底价，明明白白看清单，精准避坑！"/>
 
 <link rel="stylesheet" href="./style.css">
 
 <style>
-    /* 使用各大手机系统自带的默认无衬线字体，绝对不卡顿 */
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
     .scrollbar-hide::-webkit-scrollbar { display: none; }
     .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
@@ -21,79 +19,71 @@
         background-repeat: no-repeat;
         background-size: 1.5em 1.5em;
     }
-    /* 强制输入框字体为16px，彻底杜绝 iOS 自动放大问题 */
     input, select, textarea {
         font-size: 16px !important;
+    }
+    
+    /* 数字上翻滚动动画 */
+    @keyframes rollUp {
+        0% { transform: translateY(0); opacity: 1; }
+        45% { transform: translateY(-12px); opacity: 0; }
+        55% { transform: translateY(12px); opacity: 0; }
+        100% { transform: translateY(0); opacity: 1; }
+    }
+    .roll-up {
+        display: inline-block;
+        animation: rollUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     }
 </style>
 </head>
 <body class="bg-surface text-on-surface min-h-screen">
-<nav class="fixed top-0 w-full z-50 flex items-center justify-between px-6 h-16 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-sm">
-<h1 class="text-lg font-semibold tracking-tighter text-slate-900 dark:text-slate-100 mx-auto">装修报价计算器</h1>
-</nav>
 
-<main class="pt-24 pb-12">
-
+<main class="pt-8 pb-12">
 <div class="px-6 space-y-12">
+    
 <section class="space-y-4">
 <div class="flex items-center justify-between">
-<h3 class="text-lg font-semibold tracking-tight text-on-surface">城市与面积</h3>
-<span class="text-[0.625rem] uppercase tracking-wider text-on-surface-variant font-medium">Step 01</span>
+<h3 class="text-xl font-bold tracking-tight text-on-surface">城市与面积</h3>
 </div>
-<div class="grid grid-cols-1 gap-4">
-<div class="space-y-1.5">
-<label class="text-[0.6875rem] font-medium text-on-surface-variant ml-1">所在城市</label>
+<div class="grid grid-cols-1 gap-5">
+<div class="space-y-2">
+<label class="text-[14px] font-medium text-on-surface-variant ml-1">所在城市</label>
 <div class="relative">
-<input id="city-input" readonly onclick="openCityPicker()" class="w-full h-12 px-4 bg-surface-container-low border-none rounded-xl focus:ring-1 focus:ring-black focus:bg-surface-container-lowest transition-all cursor-pointer text-black" placeholder="请点击选择所在城市" type="text"/>
+<input id="city-input" readonly onclick="openCityPicker()" class="w-full h-14 px-4 bg-surface-container-low border-none rounded-xl focus:ring-1 focus:ring-black focus:bg-surface-container-lowest transition-all cursor-pointer text-black" placeholder="请点击选择所在城市" type="text"/>
 <svg class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
 </div>
 </div>
-<div class="space-y-1.5">
-<label class="text-[0.6875rem] font-medium text-on-surface-variant ml-1">建筑面积 (㎡)</label>
-<input id="area-input" onblur="validateArea()" class="w-full h-12 px-4 bg-surface-container-low border-none rounded-xl focus:ring-1 focus:ring-black focus:bg-surface-container-lowest transition-all placeholder:text-outline-variant" placeholder="输入面积 (40-300)" type="number" min="40" max="300" step="0.01"/>
+<div class="space-y-2">
+<label class="text-[14px] font-medium text-on-surface-variant ml-1">建筑面积 (㎡)</label>
+<input id="area-input" onblur="validateArea()" class="w-full h-14 px-4 bg-surface-container-low border-none rounded-xl focus:ring-1 focus:ring-black focus:bg-surface-container-lowest transition-all placeholder:text-outline-variant" placeholder="输入面积 (40-300)" type="number" min="40" max="300" step="0.01"/>
 </div>
 </div>
 </section>
 
 <section class="space-y-4">
 <div class="flex items-center justify-between">
-<h3 class="text-lg font-semibold tracking-tight text-on-surface">房屋状态</h3>
-<span class="text-[0.625rem] uppercase tracking-wider text-on-surface-variant font-medium">Step 02</span>
+<h3 class="text-xl font-bold tracking-tight text-on-surface">房屋状态</h3>
 </div>
-<div class="flex gap-2.5 overflow-x-auto pb-1 scrollbar-hide">
-<button id="btn-maopi" onclick="switchCondition('maopi')" class="flex-none px-6 py-2.5 rounded-full bg-black text-white text-sm font-medium transition-transform active:scale-95 shadow-sm">毛坯房</button>
-<button id="btn-laofang" onclick="switchCondition('laofang')" class="flex-none px-6 py-2.5 rounded-full bg-surface-container-high text-on-surface-variant text-sm font-medium hover:bg-surface-container-highest transition-colors">老房翻新</button>
+<div class="flex gap-2.5 overflow-x-auto pb-1 scrollbar-hide mt-2">
+<button id="btn-maopi" onclick="switchCondition('maopi')" class="flex-none px-6 py-3 rounded-full bg-black text-white text-sm font-medium transition-transform active:scale-95 shadow-sm">毛坯房</button>
+<button id="btn-laofang" onclick="switchCondition('laofang')" class="flex-none px-6 py-3 rounded-full bg-surface-container-high text-on-surface-variant text-sm font-medium hover:bg-surface-container-highest transition-colors">老房翻新</button>
 </div>
-<div class="p-5 bg-surface-container-lowest rounded-xl shadow-[0_20px_40px_-10px_rgba(45,51,56,0.04)] border border-outline-variant/10">
-<p id="condition-hint" class="text-xs text-on-surface-variant leading-relaxed">
+<div class="p-5 bg-surface-container-lowest rounded-xl shadow-[0_20px_40px_-10px_rgba(45,51,56,0.04)] border border-outline-variant/10 mt-3">
+<p id="condition-hint" class="text-[14px] text-on-surface-variant leading-relaxed">
 从0到1精工筑家。涵盖空间动线重塑、国标级水电落位、高精度墙地找平及严苛防水体系。做实隐蔽工程，让您的每一分预算都化为高品质的居住底座。
 </p>
 </div>
 </section>
 
-<section class="space-y-4">
-<div class="flex items-center justify-between">
-<h3 class="text-lg font-semibold tracking-tight text-on-surface">户型布局</h3>
-<span class="text-[0.625rem] uppercase tracking-wider text-on-surface-variant font-medium">Step 03</span>
-</div>
-<div class="space-y-3">
-<label class="text-[0.6875rem] font-medium text-on-surface-variant ml-1">选择房型</label>
-<div class="grid grid-cols-2 gap-3" id="layout-buttons">
-<button onclick="selectLayout('1室1厅', this)" class="layout-btn h-12 border border-surface-container-highest bg-surface-container-low text-sm font-medium hover:border-black transition-all rounded-lg">1室1厅</button>
-<button onclick="selectLayout('2室1厅', this)" class="layout-btn h-12 bg-black text-white text-sm font-medium transition-all shadow-lg shadow-black/10 rounded-lg active-layout">2室1厅</button>
-<button onclick="selectLayout('3室1厅', this)" class="layout-btn h-12 border border-surface-container-highest bg-surface-container-low text-sm font-medium hover:border-black transition-all rounded-lg">3室1厅</button>
-<button onclick="selectLayout('4室2厅', this)" class="layout-btn h-12 border border-surface-container-highest bg-surface-container-low text-sm font-medium hover:border-black transition-all rounded-lg">4室2厅</button>
+<section class="pt-10 pb-12">
+<div class="space-y-5">
+<div class="space-y-2 pl-1">
+<div class="text-[13px] leading-[1.5] text-slate-500 text-left">测算结果将包含主材、辅材、人工明细。</div>
+<div class="text-[13px] leading-[1.5] text-slate-500 text-left">
+    今日已有 <span id="owner-count" class="font-bold text-black italic text-[15px] inline-block">128</span> 位业主获取防坑报价单。
 </div>
 </div>
-</section>
-
-<section class="pt-8 pb-12">
-<div class="space-y-4">
-<div class="space-y-1">
-<div class="text-[11px] leading-[1.3] text-slate-500 text-left">测算结果将包含主材、辅材、人工明细。</div>
-<div class="text-[11px] leading-[1.3] text-slate-500 text-left">今日已有 <span class="font-bold text-black italic">128</span> 位业主获取专属防坑报价单。</div>
-</div>
-<button onclick="goToBOM()" class="w-full h-14 bg-black text-white font-bold shadow-2xl shadow-black/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 tracking-wide rounded-lg">
+<button onclick="goToBOM()" class="w-full h-14 bg-black text-white font-bold shadow-2xl shadow-black/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 tracking-wide rounded-xl">
 <span>开始计算报价</span>
 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-6 14h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2zM7 17h2v-2H7v2zm0-4h2v-2H7v2zm0-4h2V7H7v2z"/></svg>
 </button>
@@ -135,6 +125,7 @@ if (uid) {
 }
 
 let currentCondition = 'maopi'; 
+// 隐藏了布局选择，默认使用2室1厅以保证后续计算不出错
 let currentLayout = '2室1厅';   
 
 function validateArea() {
@@ -172,15 +163,6 @@ function switchCondition(type) {
         btnMaopi.classList.add(...inactiveClasses);
         hintText.innerText = '告别隐患，让家脱胎换骨。包含『排雷式』拆除清运、老化水电路彻底焕新、墙基深层加固及防渗漏重塑。根除历史顽疾，打造比新房更安心的居住体验。';
     }
-}
-
-function selectLayout(layout, btnElement) {
-    currentLayout = layout;
-    const buttons = document.querySelectorAll('.layout-btn');
-    buttons.forEach(btn => {
-        btn.className = 'layout-btn h-12 border border-surface-container-highest bg-surface-container-low text-sm font-medium hover:border-black transition-all rounded-lg';
-    });
-    btnElement.className = 'layout-btn h-12 bg-black text-white text-sm font-medium transition-all shadow-lg shadow-black/10 rounded-lg active-layout';
 }
 
 function goToBOM() {
@@ -247,9 +229,36 @@ const regionData = {
 document.addEventListener('DOMContentLoaded', () => {
     initCityPickerData();
     autoLocateCityByIP();
+    startScrollEffect(); // 启动数字滚动特效
 });
 
-// 移除了会导致定位卡顿的接口，只保留手动选择功能
+// 数字上翻特效逻辑
+function startScrollEffect() {
+    const countEl = document.getElementById('owner-count');
+    if (!countEl) return;
+    
+    // 随机 5 到 15 秒触发一次
+    const nextDelay = Math.floor(Math.random() * (15000 - 5000 + 1)) + 5000;
+    
+    setTimeout(() => {
+        countEl.classList.add('roll-up');
+        
+        // 在动画进行到一半（文字消失时）替换数字
+        setTimeout(() => {
+            let current = parseInt(countEl.innerText);
+            countEl.innerText = current + 1;
+        }, 300);
+        
+        // 动画结束后移除 class
+        setTimeout(() => {
+            countEl.classList.remove('roll-up');
+        }, 600);
+        
+        // 循环执行
+        startScrollEffect();
+    }, nextDelay);
+}
+
 async function autoLocateCityByIP() {
     const input = document.getElementById('city-input');
     input.value = ""; 
