@@ -23,19 +23,17 @@
 <body class="bg-surface text-on-surface">
 
 <main class="pt-6 pb-12 px-6 max-w-2xl mx-auto">
-    <section class="bg-[#e8e8ed] p-1 rounded-full flex gap-1 mb-6 relative">
+    <section class="bg-[#e8e8ed] p-1 rounded-full flex gap-1 mb-8 relative">
         <button class="tab-btn tab-active flex-1 py-2 text-[13px] font-medium rounded-full transition-all duration-300">经济实用</button>
         <button class="tab-btn flex-1 py-2 text-[13px] font-medium rounded-full text-on-surface-variant hover:text-on-surface transition-all duration-300">品质主流</button>
         <button class="tab-btn flex-1 py-2 text-[13px] font-medium rounded-full text-on-surface-variant hover:text-on-surface transition-all duration-300">奢华环保</button>
     </section>
 
-    <div class="mb-5 mt-2">
-        <a href="index.html" class="inline-flex items-center justify-center rounded-full active:scale-95 transition-all" style="width: 36px; height: 36px; background-color: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-decoration: none; color: #1d1d1f;">
+    <section class="text-left mb-10 min-h-[180px] relative">
+        <a href="index.html" class="absolute right-0 top-0 inline-flex items-center justify-center rounded-full active:scale-95 transition-all" style="width: 36px; height: 36px; background-color: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-decoration: none; color: #1d1d1f; z-index: 10;">
             <svg style="width: 20px; height: 20px; margin-right: 2px;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
         </a>
-    </div>
 
-    <section class="text-left mb-10 min-h-[180px]">
         <div class="inline-flex items-center gap-2 text-on-surface-variant mb-2">
             <span class="text-[11px] font-bold tracking-[0.12em] uppercase">预估总价</span>
         </div>
@@ -89,8 +87,8 @@
 
 <div id="agreement-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeAgreementModal()"></div>
-    <div class="relative bg-white w-[90%] max-w-sm rounded-2xl shadow-2xl z-10 text-center" style="padding: 28px 24px 24px 24px;">
-        <h3 class="font-bold mb-4 text-on-surface" style="font-size: 18px;">温馨提示</h3>
+    <div class="relative bg-white w-[90%] max-w-sm rounded-2xl shadow-2xl z-10 text-center" style="padding: 20px 24px 24px 24px;">
+        <h3 class="font-bold mb-3 text-on-surface" style="font-size: 18px;">温馨提示</h3>
         <p class="text-[14px] text-on-surface-variant mb-8">请阅读并同意<span style="color: purple;">《用户协议》</span>和<span style="color: purple;">《隐私协议》</span></p>
         <div class="flex gap-4 w-full justify-between">
             <button onclick="closeAgreementModal()" class="flex-1 h-12 bg-surface-container-low text-on-surface font-medium rounded-xl active:scale-95 transition-all border-none">取消</button>
@@ -337,117 +335,4 @@
 
         localTimeout = setTimeout(() => {
             clearInterval(localDotInterval);
-            localLoadingState.classList.add('hidden');
-            localLoadingState.classList.remove('inline-flex');
-            currencySymbol.classList.remove('hidden');
-            priceValue.classList.remove('hidden');
-            
-            calculateAndDisplay(tierType);
-        }, 8000); 
-    }
-
-    let smsCountdown = 0;
-    let smsInterval = null;
-
-    function openUnlockModal() {
-        document.getElementById('unlock-modal').classList.remove('hidden');
-    }
-
-    function closeUnlockModal() {
-        document.getElementById('unlock-modal').classList.add('hidden');
-    }
-
-    function showToast(msg) {
-        const toast = document.getElementById('toast-message');
-        if (toast) {
-            toast.innerText = msg;
-            toast.style.display = 'block';
-            void toast.offsetWidth; 
-            toast.style.opacity = '1';
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => { toast.style.display = 'none'; }, 300);
-            }, 2000);
-        }
-    }
-
-    function sendVerifyCode() {
-        const phone = document.getElementById('phone-input').value.trim();
-        if (!/^1[3-9]\d{9}$/.test(phone)) {
-            showToast('请输入正确的11位手机号码');
-            return;
-        }
-        if (smsCountdown > 0) return;
-
-        smsCountdown = 60;
-        const btn = document.getElementById('send-code-btn');
-        btn.classList.replace('bg-black', 'bg-gray-300');
-        btn.innerText = `${smsCountdown}s后重发`;
-        
-        setTimeout(() => {
-            const codeInput = document.getElementById('code-input');
-            if (codeInput && !codeInput.value) {
-                codeInput.value = Math.floor(1000 + Math.random() * 9000); 
-            }
-        }, 3000);
-        
-        smsInterval = setInterval(() => {
-            smsCountdown--;
-            if (smsCountdown <= 0) {
-                clearInterval(smsInterval);
-                btn.classList.replace('bg-gray-300', 'bg-black');
-                btn.innerText = '获取验证码';
-            } else {
-                btn.innerText = `${smsCountdown}s后重发`;
-            }
-        }, 1000);
-    }
-
-    async function confirmUnlock() {
-        const phone = document.getElementById('phone-input').value.trim();
-        const code = document.getElementById('code-input').value.trim();
-        
-        if (!/^1[3-9]\d{9}$/.test(phone) || !code) {
-            showToast('请完善手机号和验证码');
-            return;
-        }
-
-        const uid = sessionStorage.getItem('referrer_uid') || '1';
-
-        try {
-            const response = await fetch('/api/quotation/submit', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    phone: phone,
-                    user_id: uid
-                })
-            });
-            
-            const resData = await response.json();
-            
-            if(resData.code !== 200) {
-                showToast("提交失败: " + resData.message);
-                return;
-            }
-
-            showToast("成功解锁");
-            
-            setTimeout(() => {
-                closeUnlockModal();
-                isUnlocked = true;
-                localStorage.setItem('guide_unlocked', 'true'); 
-                
-                renderGuideData(globalCsvData);
-            }, 800);
-
-        } catch (error) {
-            console.error("解锁请求失败:", error);
-            showToast("网络异常，请重试");
-        }
-    }
-</script>
-</body>
-</html>
+            localLoading
