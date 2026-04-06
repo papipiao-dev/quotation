@@ -29,10 +29,9 @@
         <button class="tab-btn flex-1 py-2 text-[13px] font-medium rounded-full text-on-surface-variant hover:text-on-surface transition-all duration-300">奢华环保</button>
     </section>
 
-    <div class="mb-3 mt-2">
-        <a href="index.html" class="inline-flex items-center text-on-surface-variant hover:text-black transition-colors" style="text-decoration: none; font-size: 14px; font-weight: 500;">
-            <svg style="width: 20px; height: 20px; margin-right: 4px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M15 19l-7-7 7-7"/></svg>
-            返回报价页
+    <div class="mb-5 mt-2">
+        <a href="index.html" class="inline-flex items-center justify-center rounded-full active:scale-95 transition-all" style="width: 36px; height: 36px; background-color: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-decoration: none; color: #1d1d1f;">
+            <svg style="width: 20px; height: 20px; margin-right: 2px;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
         </a>
     </div>
 
@@ -90,12 +89,12 @@
 
 <div id="agreement-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeAgreementModal()"></div>
-    <div class="relative bg-white w-[90%] max-w-sm rounded-2xl p-6 shadow-2xl z-10 text-center">
+    <div class="relative bg-white w-[90%] max-w-sm rounded-2xl shadow-2xl z-10 text-center" style="padding: 28px 24px 24px 24px;">
         <h3 class="font-bold mb-4 text-on-surface" style="font-size: 18px;">温馨提示</h3>
         <p class="text-[14px] text-on-surface-variant mb-8">请阅读并同意<span style="color: purple;">《用户协议》</span>和<span style="color: purple;">《隐私协议》</span></p>
         <div class="flex gap-4 w-full justify-between">
-            <button onclick="closeAgreementModal()" class="flex-1 h-12 bg-surface-container-low text-on-surface font-medium rounded-xl active:scale-95 transition-all">取消</button>
-            <button onclick="agreeAndContinue()" class="flex-1 h-12 bg-black text-white font-medium rounded-xl active:scale-95 transition-all">同意并继续</button>
+            <button onclick="closeAgreementModal()" class="flex-1 h-12 bg-surface-container-low text-on-surface font-medium rounded-xl active:scale-95 transition-all border-none">取消</button>
+            <button onclick="agreeAndContinue()" class="flex-1 h-12 bg-black text-white font-medium rounded-xl active:scale-95 transition-all border-none">同意并继续</button>
         </div>
     </div>
 </div>
@@ -172,7 +171,6 @@
 
             const items = groupedData[stageName];
 
-            // 这里加大了外边距和内边距，让排版更加透气
             let sectionHtml = `
                 <section class="apple-card relative" style="padding: 24px 20px; margin-bottom: 28px;">
                     <div style="margin-bottom: 16px;">
@@ -200,7 +198,6 @@
                     if (pitfallMatch) pitfallText = pitfallMatch[1].trim();
                 }
 
-                // 增加了框的内边距和字体大小，以及行高
                 let warningHtml = warningText ? 
                     `<div style="background-color: #fffbeb; color: #78350f; padding: 12px 16px; border-radius: 12px; font-size: 14px; line-height: 1.6; border: 1px solid #fef3c7;">
                         <span style="font-weight: 700;">⚠️ 警示：</span>${warningText}
@@ -211,7 +208,6 @@
                         <span style="font-weight: 700;">💡 避坑：</span>${pitfallText}
                     </div>` : '';
 
-                // 增加了每个独立项目之间的内部缝隙（gap从6px升至8px，底部边距10px）
                 sectionHtml += `
                     <div>
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 12px;">
@@ -227,11 +223,10 @@
 
                 if (!isUnlocked && stageName === '一、拆除新建' && (itemNum == '14' || itemName.includes('轻钢龙骨'))) {
                     stopRendering = true;
-                    // 同步调高了遮罩层以适应更宽松的内部布局
                     sectionHtml += `
                         </div>
                         <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 160px; background: linear-gradient(to top, rgba(255,255,255,1) 30%, rgba(255,255,255,0.8) 70%, transparent); display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 24px; border-bottom-left-radius: 32px; border-bottom-right-radius: 32px;">
-                            <button onclick="checkAgreementAndUnlock()" style="padding: 14px 28px; background: #000; color: #fff; font-weight: 700; border-radius: 16px; display: flex; align-items: center; gap: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); margin-bottom: 14px;">
+                            <button onclick="checkAgreementAndUnlock()" style="padding: 14px 28px; background: #000; color: #fff; font-weight: 700; border-radius: 16px; display: flex; align-items: center; gap: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); margin-bottom: 14px; border: none;">
                                 <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
                                 解锁全部避坑指南
                             </button>
