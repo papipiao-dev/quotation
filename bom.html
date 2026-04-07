@@ -91,7 +91,7 @@
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeAgreementModal()"></div>
     <div class="relative bg-white w-[90%] max-w-sm rounded-2xl shadow-2xl z-10 text-center" style="padding: 28px 24px 24px 24px;">
         <h3 class="font-bold mb-4 text-on-surface" style="font-size: 18px;">温馨提示</h3>
-        <p class="text-[14px] text-on-surface-variant mb-8">请阅读并同意<span style="color: purple;">《用户协议》</span>和<span style="color: purple;">《隐私协议》</span></p>
+        <p class="text-[14px] text-on-surface-variant mb-8">请阅读并同意<a href="user_agreement.html" style="color: purple; text-decoration: none;">《用户协议》</a>和<a href="privacy_policy.html" style="color: purple; text-decoration: none;">《隐私协议》</a></p>
         <div class="flex gap-4 w-full justify-between">
             <button onclick="closeAgreementModal()" class="flex-1 h-12 bg-surface-container-low text-on-surface font-medium rounded-xl active:scale-95 transition-all border-none">取消</button>
             <button onclick="agreeAndContinue()" class="flex-1 h-12 bg-black text-white font-medium rounded-xl active:scale-95 transition-all border-none">同意并继续</button>
@@ -232,7 +232,7 @@
                             </button>
                             <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #596065;">
                                 <input type="checkbox" id="agreement-checkbox" style="width: 16px; height: 16px; accent-color: #000; margin: 0; cursor: pointer;">
-                                <label for="agreement-checkbox" style="cursor: pointer;">已阅读并同意<span style="color: purple;">《用户协议》</span>和<span style="color: purple;">《隐私协议》</span></label>
+                                <label for="agreement-checkbox" style="cursor: pointer;">已阅读并同意<a href="user_agreement.html" style="color: purple; text-decoration: none;">《用户协议》</a>和<a href="privacy_policy.html" style="color: purple; text-decoration: none;">《隐私协议》</a></label>
                             </div>
                         </div>
                     </section>`;
