@@ -89,7 +89,7 @@
 <div class="pl-1" style="margin-bottom: 12px;">
 <div class="text-[13px] leading-[1.2] text-slate-500 text-left">测算结果将包含主材、辅材、人工明细。</div>
 <div class="text-[13px] leading-[1.2] text-slate-500 text-left">
-    今日已有 <span id="owner-count" class="font-bold text-black italic text-[15px] inline-block">--</span> 位业主获取报价与避坑指南。
+    今日已有 <span id="owner-count" class="font-bold text-black italic text-[15px] inline-block">--</span> 位业主获取避坑报价单。
 </div>
 </div>
 <button onclick="goToBOM()" class="w-full h-14 bg-black text-white font-bold shadow-2xl shadow-black/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 tracking-wide rounded-xl">
@@ -140,7 +140,6 @@ if (uid) {
 let currentCondition = 'maopi'; 
 let currentLayout = '2室1厅';   
 
-// 封装原生 Toast 显示逻辑
 function showToast(msg) {
     const toast = document.getElementById('toast-message');
     if (toast) {
@@ -264,7 +263,6 @@ function initOwnerCount() {
     const countEl = document.getElementById('owner-count');
     if (!countEl) return;
     
-    // 获取当天的日期字符串
     const today = new Date().toLocaleDateString('zh-CN'); 
     let storedData = localStorage.getItem('owner_count_data');
     let currentCount = 0;
@@ -272,20 +270,17 @@ function initOwnerCount() {
     if (storedData) {
         storedData = JSON.parse(storedData);
         if (storedData.date === today) {
-            currentCount = storedData.count; // 是今天，读取本地数据
+            currentCount = storedData.count; 
         }
     }
 
     if (currentCount === 0) {
-        // 如果是今天第一次进，生成一个基于日期的基础数字
         const baseHash = new Date().getDate() * 5 % 50; 
         currentCount = 100 + baseHash;
     } else {
-        // 当天如果多次刷新页面，每次随机增加 1~3 个人，显得更真实
         currentCount += Math.floor(Math.random() * 3) + 1;
     }
 
-    // 保存最新数据到本地
     localStorage.setItem('owner_count_data', JSON.stringify({
         date: today,
         count: currentCount
@@ -293,24 +288,23 @@ function initOwnerCount() {
 
     countEl.innerText = currentCount;
     
-    // 开始滚动动画
+    // 启动跳动动画
     startScrollEffect(currentCount, today);
 }
 
+// 修复了异步闭包导致的数字不更新 Bug
 function startScrollEffect(currentCount, today) {
     const countEl = document.getElementById('owner-count');
     if (!countEl) return;
     
-    // 随机 5~15 秒跳动一次
     const nextDelay = Math.floor(Math.random() * (15000 - 5000 + 1)) + 5000;
     
     setTimeout(() => {
         countEl.classList.add('roll-up');
+        currentCount += 1; // 提前执行数字增加
         
         setTimeout(() => {
-            currentCount += 1; // 每次跳动加 1
-            countEl.innerText = currentCount;
-            // 更新本地存储
+            countEl.innerText = currentCount; // 在向上滚动的隐蔽瞬间替换 DOM 文字
             localStorage.setItem('owner_count_data', JSON.stringify({
                 date: today,
                 count: currentCount
@@ -319,31 +313,50 @@ function startScrollEffect(currentCount, today) {
         
         setTimeout(() => {
             countEl.classList.remove('roll-up');
+            // 注意：一定要在这里（整个动画周期彻底跑完后），再把最新的 currentCount 传递给下一次循环
+            startScrollEffect(currentCount, today); 
         }, 600);
         
-        startScrollEffect(currentCount, today); // 递归调用
     }, nextDelay);
 }
 
+// 采用双重保险的地理位置定位方案
 async function autoLocateCityByIP() {
     const input = document.getElementById('city-input');
     input.placeholder = "正在定位中...";
+    
+    let locatedCity = "";
+
     try {
-        // 使用百度云公共IP定位接口
-        const response = await fetch('https://qifu-api.baidubce.com/info/ip');
+        // 方案A：使用非常稳定的 vvhan 公共接口
+        const response = await fetch('https://api.vvhan.com/api/ipInfo');
         const data = await response.json();
-        
-        if (data && data.data && data.data.city) {
-            let city = data.data.city;
-            if (!city.endsWith('市') && !city.endsWith('地区') && !city.endsWith('州')) {
-                city += '市';
-            }
-            input.value = city;
+        if (data && data.success && data.info && data.info.city) {
+            locatedCity = data.info.city;
         } else {
-            input.placeholder = "选择城市";
+            throw new Error("vvhan API failed");
         }
     } catch (error) {
-        console.error("定位失败:", error);
+        console.log("主路线定位失败，尝试备用路线...");
+        try {
+            // 方案B（Fallback）：使用百度云接口
+            const res2 = await fetch('https://qifu-api.baidubce.com/info/ip');
+            const data2 = await res2.json();
+            if (data2 && data2.data && data2.data.city) {
+                locatedCity = data2.data.city;
+            }
+        } catch (err2) {
+            console.error("定位全部失败");
+        }
+    }
+
+    // 处理定位结果并填入输入框
+    if (locatedCity) {
+        if (!locatedCity.endsWith('市') && !locatedCity.endsWith('地区') && !locatedCity.endsWith('州')) {
+            locatedCity += '市';
+        }
+        input.value = locatedCity;
+    } else {
         input.placeholder = "选择城市";
     }
 }
