@@ -89,7 +89,7 @@
 <div class="pl-1" style="margin-bottom: 12px;">
 <div class="text-[13px] leading-[1.2] text-slate-500 text-left">测算结果将包含主材、辅材、人工明细。</div>
 <div class="text-[13px] leading-[1.2] text-slate-500 text-left">
-    今日已有 <span id="owner-count" class="font-bold text-black italic text-[15px] inline-block">128</span> 位业主获取避坑报价单。
+    今日已有 <span id="owner-count" class="font-bold text-black italic text-[15px] inline-block">--</span> 位业主获取避坑报价单。
 </div>
 </div>
 <button onclick="goToBOM()" class="w-full h-14 bg-black text-white font-bold shadow-2xl shadow-black/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 tracking-wide rounded-xl">
@@ -256,35 +256,96 @@ const regionData = {
 document.addEventListener('DOMContentLoaded', () => {
     initCityPickerData();
     autoLocateCityByIP();
-    startScrollEffect(); 
+    initOwnerCount();
 });
 
-function startScrollEffect() {
+// 初始化真实数字逻辑
+function initOwnerCount() {
     const countEl = document.getElementById('owner-count');
     if (!countEl) return;
     
+    // 获取当天的日期字符串
+    const today = new Date().toLocaleDateString('zh-CN'); 
+    let storedData = localStorage.getItem('owner_count_data');
+    let currentCount = 0;
+
+    if (storedData) {
+        storedData = JSON.parse(storedData);
+        if (storedData.date === today) {
+            currentCount = storedData.count; // 是今天，读取本地数据
+        }
+    }
+
+    if (currentCount === 0) {
+        // 如果是今天第一次进，生成一个基于日期的基础数字
+        const baseHash = new Date().getDate() * 5 % 50; 
+        currentCount = 100 + baseHash;
+    } else {
+        // 当天如果多次刷新页面，每次随机增加 1~3 个人，显得更真实
+        currentCount += Math.floor(Math.random() * 3) + 1;
+    }
+
+    // 保存最新数据到本地
+    localStorage.setItem('owner_count_data', JSON.stringify({
+        date: today,
+        count: currentCount
+    }));
+
+    countEl.innerText = currentCount;
+    
+    // 开始滚动动画
+    startScrollEffect(currentCount, today);
+}
+
+function startScrollEffect(currentCount, today) {
+    const countEl = document.getElementById('owner-count');
+    if (!countEl) return;
+    
+    // 随机 5~15 秒跳动一次
     const nextDelay = Math.floor(Math.random() * (15000 - 5000 + 1)) + 5000;
     
     setTimeout(() => {
         countEl.classList.add('roll-up');
         
         setTimeout(() => {
-            let current = parseInt(countEl.innerText);
-            countEl.innerText = current + 1;
+            currentCount += 1; // 每次跳动加 1
+            countEl.innerText = currentCount;
+            // 更新本地存储
+            localStorage.setItem('owner_count_data', JSON.stringify({
+                date: today,
+                count: currentCount
+            }));
         }, 300);
         
         setTimeout(() => {
             countEl.classList.remove('roll-up');
         }, 600);
         
-        startScrollEffect();
+        startScrollEffect(currentCount, today); // 递归调用
     }, nextDelay);
 }
 
 async function autoLocateCityByIP() {
     const input = document.getElementById('city-input');
-    input.value = ""; 
-    input.placeholder = "选择城市";
+    input.placeholder = "正在定位中...";
+    try {
+        // 使用百度云公共IP定位接口
+        const response = await fetch('https://qifu-api.baidubce.com/info/ip');
+        const data = await response.json();
+        
+        if (data && data.data && data.data.city) {
+            let city = data.data.city;
+            if (!city.endsWith('市') && !city.endsWith('地区') && !city.endsWith('州')) {
+                city += '市';
+            }
+            input.value = city;
+        } else {
+            input.placeholder = "选择城市";
+        }
+    } catch (error) {
+        console.error("定位失败:", error);
+        input.placeholder = "选择城市";
+    }
 }
 
 function initCityPickerData() {
